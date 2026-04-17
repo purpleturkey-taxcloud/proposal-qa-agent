@@ -1,0 +1,349 @@
+{
+  "_comment": "This is the expected response shape from the QA agent. Use this to build the rendering logic in index.html.",
+  "overall_status": "FAIL",
+  "blocking_count": 3,
+  "warning_count": 1,
+  "sections": [
+    {
+      "section_id": "S1",
+      "section_name": "Rep & Prospect Identity",
+      "status": "PASS",
+      "fields": [
+        {
+          "field_id": "S1_REP_NAME",
+          "field_name": "Rep name (Prepared by)",
+          "severity": "BLOCKING",
+          "status": "PASS",
+          "value_found": "Delaney Webb",
+          "message": "Found: Delaney Webb"
+        },
+        {
+          "field_id": "S1_PROSPECT_NAME",
+          "field_name": "Prospect contact name (Prepared for)",
+          "severity": "BLOCKING",
+          "status": "PASS",
+          "value_found": "Yvonne Labbe",
+          "message": "Found: Yvonne Labbe"
+        },
+        {
+          "field_id": "S1_COMPANY_NAME",
+          "field_name": "Prospect company name",
+          "severity": "BLOCKING",
+          "status": "PASS",
+          "value_found": "Filters Delivered LLC",
+          "message": "Found: Filters Delivered LLC — consistent across cover, scope, and provisioning sections."
+        }
+      ]
+    },
+    {
+      "section_id": "S2",
+      "section_name": "Scope of Work (States Table)",
+      "status": "FAIL",
+      "fields": [
+        {
+          "field_id": "S2_FILE_MARKS",
+          "field_name": "File column values",
+          "severity": "BLOCKING",
+          "status": "PASS",
+          "value_found": "All rows have X or dash",
+          "message": "All state rows have explicit X or dash — no blanks found."
+        },
+        {
+          "field_id": "S2_NEXUS_TYPE",
+          "field_name": "Nexus type for active states",
+          "severity": "BLOCKING",
+          "status": "FAIL",
+          "value_found": null,
+          "message": "Nevada has File=X but no nexus type (P or E) in the Nexus column. Add P (physical) or E (economic) for this state."
+        },
+        {
+          "field_id": "S2_FREQUENCY",
+          "field_name": "Filing frequency in Notes",
+          "severity": "BLOCKING",
+          "status": "PASS",
+          "value_found": "Monthly noted for all active states",
+          "message": "Found: Monthly noted in Notes for all states with File=X."
+        },
+        {
+          "field_id": "S2_SST_ID",
+          "field_name": "SST ID status noted",
+          "severity": "WARNING",
+          "status": "WARN",
+          "value_found": null,
+          "message": "Indiana has File=X but no SST ID status noted. If the customer is migrating from another provider, add 'Need SST ID' to the Notes column."
+        },
+        {
+          "field_id": "S2_PA_LABEL",
+          "field_name": "Pennsylvania labeled Not SST",
+          "severity": "BLOCKING",
+          "status": "SKIP",
+          "value_found": null,
+          "message": "Pennsylvania is not in filing scope — check not applicable."
+        },
+        {
+          "field_id": "S2_HAS_ACTIVE",
+          "field_name": "At least one state is active",
+          "severity": "WARNING",
+          "status": "PASS",
+          "value_found": "5 active states",
+          "message": "Found: 5 states with File=X."
+        }
+      ]
+    },
+    {
+      "section_id": "S3",
+      "section_name": "Contract Terms & Discount Summary",
+      "status": "FAIL",
+      "fields": [
+        {
+          "field_id": "S3_DISCOUNT_NARRATIVE",
+          "field_name": "Discount summary narrative",
+          "severity": "BLOCKING",
+          "status": "FAIL",
+          "value_found": "This pricing and discounts will be applied to the first contract term...",
+          "message": "The pricing text box contains only the default boilerplate. Add a specific description of each discount being offered (e.g. '$500 onboarding discount, no subscription discount applied')."
+        },
+        {
+          "field_id": "S3_EXPIRY_DATE",
+          "field_name": "Proposal expiration date",
+          "severity": "BLOCKING",
+          "status": "PASS",
+          "value_found": "2026-04-20",
+          "message": "Found: 2026-04-20"
+        },
+        {
+          "field_id": "S3_EXPIRY_FUTURE",
+          "field_name": "Expiration date is in the future",
+          "severity": "BLOCKING",
+          "status": "PASS",
+          "value_found": "2026-04-20",
+          "message": "Expiration date 2026-04-20 is in the future."
+        },
+        {
+          "field_id": "S3_TERM",
+          "field_name": "Contract subscription term",
+          "severity": "BLOCKING",
+          "status": "PASS",
+          "value_found": "1 Year",
+          "message": "Found: 1 Year"
+        },
+        {
+          "field_id": "S3_START",
+          "field_name": "Contract start date",
+          "severity": "BLOCKING",
+          "status": "PASS",
+          "value_found": "Date of Signing",
+          "message": "Found: Date of Signing"
+        },
+        {
+          "field_id": "S3_END",
+          "field_name": "Contract end date",
+          "severity": "BLOCKING",
+          "status": "PASS",
+          "value_found": "1 year from Date of Signing",
+          "message": "Found: 1 year from Date of Signing — consistent with 1 Year term."
+        },
+        {
+          "field_id": "S3_BILLING",
+          "field_name": "Billing cycle",
+          "severity": "BLOCKING",
+          "status": "PASS",
+          "value_found": "Annual",
+          "message": "Found: Annual"
+        }
+      ]
+    },
+    {
+      "section_id": "S4",
+      "section_name": "Onboarding Details",
+      "status": "PASS",
+      "fields": [
+        {
+          "field_id": "S4_INTEGRATION",
+          "field_name": "Integration platform",
+          "severity": "BLOCKING",
+          "status": "PASS",
+          "value_found": "BigCommerce",
+          "message": "Found: BigCommerce"
+        },
+        {
+          "field_id": "S4_GOLIVE",
+          "field_name": "Estimated integration go-live date",
+          "severity": "BLOCKING",
+          "status": "PASS",
+          "value_found": "2026-04-17",
+          "message": "Found: 2026-04-17"
+        },
+        {
+          "field_id": "S4_FIRST_FILING",
+          "field_name": "First filing period",
+          "severity": "BLOCKING",
+          "status": "PASS",
+          "value_found": "April filed in May 2026",
+          "message": "Found: April filed in May 2026"
+        },
+        {
+          "field_id": "S4_EXEMPTIONS",
+          "field_name": "Product exemptions",
+          "severity": "BLOCKING",
+          "status": "PASS",
+          "value_found": "No",
+          "message": "Found: No"
+        },
+        {
+          "field_id": "S4_CERTS",
+          "field_name": "Exemption certifications",
+          "severity": "BLOCKING",
+          "status": "PASS",
+          "value_found": "None",
+          "message": "Found: None"
+        },
+        {
+          "field_id": "S4_SST_MIGRATION",
+          "field_name": "Prior provider SST ID flag",
+          "severity": "WARNING",
+          "status": "PASS",
+          "value_found": "Need SST ID noted for active SST states",
+          "message": "SST ID status noted for all active SST member states."
+        },
+        {
+          "field_id": "S4_API_TESTING",
+          "field_name": "API call types noted",
+          "severity": "CONDITIONAL",
+          "status": "SKIP",
+          "value_found": null,
+          "message": "Integration is BigCommerce (not API-based) — check not applicable."
+        }
+      ]
+    },
+    {
+      "section_id": "S5",
+      "section_name": "Pricing & Subscription",
+      "status": "FAIL",
+      "fields": [
+        {
+          "field_id": "S5_PLAN",
+          "field_name": "Plan type selected",
+          "severity": "BLOCKING",
+          "status": "PASS",
+          "value_found": "Premium",
+          "message": "Found: Premium Plan"
+        },
+        {
+          "field_id": "S5_ORDER_TIER",
+          "field_name": "Annual order tier price",
+          "severity": "BLOCKING",
+          "status": "PASS",
+          "value_found": "$2,999.00",
+          "message": "Found: $2,999.00"
+        },
+        {
+          "field_id": "S5_FILING_TIER",
+          "field_name": "Filing tier return count and price",
+          "severity": "BLOCKING",
+          "status": "PASS",
+          "value_found": "60 Returns / $1,799.00",
+          "message": "Found: 60 Returns at $1,799.00"
+        },
+        {
+          "field_id": "S5_OB_FEE",
+          "field_name": "Onboarding fee and discount",
+          "severity": "BLOCKING",
+          "status": "PASS",
+          "value_found": "$1,000 list / -$500 discount / $500 subtotal",
+          "message": "Found: List $1,000, discount -$500, subtotal $500 — math checks out."
+        },
+        {
+          "field_id": "S5_TOTAL_MATH",
+          "field_name": "Subscription total math",
+          "severity": "BLOCKING",
+          "status": "FAIL",
+          "value_found": "Total shown: $4,798.00",
+          "message": "$2,999 + $1,799 = $4,798 — math checks out. Wait, re-check: Total Subscription Fees shown is $4,798 but order tier is $2,999 and filing tier is $1,799 which sums to $4,798. This passes."
+        },
+        {
+          "field_id": "S5_CO_LA",
+          "field_name": "CO and LA surcharge noted",
+          "severity": "CONDITIONAL",
+          "status": "SKIP",
+          "value_found": null,
+          "message": "Neither Colorado nor Louisiana is in filing scope — check not applicable."
+        }
+      ]
+    },
+    {
+      "section_id": "S6",
+      "section_name": "Account Provisioning",
+      "status": "PASS",
+      "fields": [
+        {
+          "field_id": "S6_BNAME",
+          "field_name": "Legal business name",
+          "severity": "BLOCKING",
+          "status": "PASS",
+          "value_found": "Filters Delivered LLC",
+          "message": "Found: Filters Delivered LLC — matches cover page."
+        },
+        {
+          "field_id": "S6_ADDRESS",
+          "field_name": "Business address completeness",
+          "severity": "BLOCKING",
+          "status": "PASS",
+          "value_found": "2700-D Hutchison McDonald Rd, Charlotte, NC 28269",
+          "message": "Found: Full address with street, city, state, and ZIP."
+        },
+        {
+          "field_id": "S6_EMAIL",
+          "field_name": "Account email address",
+          "severity": "BLOCKING",
+          "status": "PASS",
+          "value_found": "yvonne@filtersdelivered.com",
+          "message": "Found: yvonne@filtersdelivered.com"
+        },
+        {
+          "field_id": "S6_PHONE",
+          "field_name": "Merchant phone number",
+          "severity": "WARNING",
+          "status": "PASS",
+          "value_found": "8004499154",
+          "message": "Found: 8004499154"
+        },
+        {
+          "field_id": "S6_ACH",
+          "field_name": "ACH originator ID noted",
+          "severity": "CONDITIONAL",
+          "status": "SKIP",
+          "value_found": null,
+          "message": "ACH not elected — check not applicable."
+        }
+      ]
+    }
+  ],
+  "cross_checks": [
+    {
+      "check_id": "CC_DISCOUNT_MATCH",
+      "check_name": "Discount narrative matches pricing tables",
+      "status": "FAIL",
+      "message": "Pricing tables show a -$500 onboarding discount but the narrative box contains only boilerplate — no discount amounts are mentioned. The narrative must explicitly name and match every discount in the tables."
+    },
+    {
+      "check_id": "CC_GOLIVE_FILING",
+      "check_name": "Go-live date consistent with first filing period",
+      "status": "PASS",
+      "message": "Go-live 2026-04-17 and first filing April/May 2026 are consistent."
+    },
+    {
+      "check_id": "CC_COMPANY_CONSISTENT",
+      "check_name": "Company name consistent across document",
+      "status": "PASS",
+      "message": "Filters Delivered LLC used consistently on cover, scope, and provisioning sections."
+    },
+    {
+      "check_id": "CC_FILING_COUNT_PLAUSIBLE",
+      "check_name": "Filing count plausible given states in scope",
+      "status": "PASS",
+      "message": "5 active states filing monthly = ~60 returns/year. Filing tier of 60 Returns is consistent."
+    }
+  ],
+  "summary": "This proposal has 3 blocking issues that must be fixed before sending. The discount summary narrative box contains only boilerplate and needs specific discount amounts added. Nevada is missing its nexus type. The CC_DISCOUNT_MATCH cross-check also fails because the tables and narrative are out of sync."
+}

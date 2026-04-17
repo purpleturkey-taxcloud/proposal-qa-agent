@@ -1,0 +1,539 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>TaxCloud Proposal QA</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --blue: #1B4DFF;
+      --blue-dark: #1340d6;
+      --navy: #0A1628;
+      --navy-mid: #1a2c47;
+      --white: #ffffff;
+      --gray-50: #f8f9fc;
+      --gray-100: #f0f2f7;
+      --gray-200: #e2e6ef;
+      --gray-500: #6b7a99;
+      --gray-700: #374166;
+      --red: #d92b2b;
+      --red-light: #fff0f0;
+      --red-border: #fcc;
+      --amber: #b45309;
+      --amber-light: #fffbeb;
+      --amber-border: #fde68a;
+      --green: #15803d;
+      --green-light: #f0fdf4;
+      --green-border: #bbf7d0;
+    }
+
+    body {
+      font-family: 'Inter', system-ui, sans-serif;
+      background: var(--gray-50);
+      color: var(--navy);
+      min-height: 100vh;
+    }
+
+    header {
+      background: var(--navy);
+      padding: 0 32px;
+      height: 56px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .logo-mark {
+      width: 28px; height: 28px;
+      background: var(--blue);
+      border-radius: 6px;
+      display: flex; align-items: center; justify-content: center;
+      font-weight: 700; font-size: 14px; color: #fff; flex-shrink: 0;
+    }
+    header h1 { font-size: 15px; font-weight: 600; color: #fff; letter-spacing: -0.01em; }
+    header span { color: var(--gray-500); font-size: 13px; margin-left: 4px; }
+
+    main { max-width: 900px; margin: 0 auto; padding: 32px 24px 64px; }
+
+    /* ── Upload panel ── */
+    .upload-panel {
+      background: var(--white);
+      border: 1px solid var(--gray-200);
+      border-radius: 12px;
+      padding: 24px;
+      margin-bottom: 24px;
+    }
+
+    .drop-zone {
+      border: 2px dashed var(--gray-200);
+      border-radius: 10px;
+      padding: 40px 24px;
+      text-align: center;
+      cursor: pointer;
+      transition: border-color 0.15s, background 0.15s;
+      position: relative;
+    }
+    .drop-zone:hover, .drop-zone.drag-over {
+      border-color: var(--blue);
+      background: rgba(27,77,255,0.03);
+    }
+    .drop-zone input[type="file"] {
+      position: absolute; inset: 0; opacity: 0; cursor: pointer;
+      width: 100%; height: 100%;
+    }
+    .drop-icon { width: 44px; height: 44px; margin: 0 auto 14px; color: var(--blue); }
+    .drop-zone p { font-size: 15px; color: var(--gray-500); }
+    .drop-zone strong { color: var(--blue); font-weight: 600; }
+    .file-name {
+      margin-top: 12px; font-size: 13px; font-weight: 500;
+      color: var(--navy); background: var(--gray-100);
+      display: inline-block; padding: 4px 12px; border-radius: 6px;
+    }
+    .file-type-error { color: var(--red); font-size: 13px; margin-top: 8px; display: none; }
+
+    .btn-validate {
+      width: 100%; height: 46px;
+      background: var(--blue); color: #fff;
+      border: none; border-radius: 8px;
+      font-size: 15px; font-weight: 600; font-family: inherit;
+      cursor: pointer; margin-top: 16px;
+      transition: background 0.15s;
+    }
+    .btn-validate:hover:not(:disabled) { background: var(--blue-dark); }
+    .btn-validate:disabled { opacity: 0.4; cursor: not-allowed; }
+
+    /* ── Loading ── */
+    #loading { display: none; text-align: center; padding: 56px 24px; }
+    .spinner {
+      width: 40px; height: 40px;
+      border: 3px solid var(--gray-200);
+      border-top-color: var(--blue);
+      border-radius: 50%;
+      animation: spin 0.75s linear infinite;
+      margin: 0 auto 16px;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+    #loading p { font-size: 15px; color: var(--gray-500); }
+
+    /* ── Error ── */
+    #error-box {
+      display: none;
+      background: var(--red-light); border: 1px solid var(--red-border);
+      border-radius: 10px; padding: 16px 20px; margin-bottom: 24px;
+    }
+    #error-box h3 { color: var(--red); font-size: 14px; font-weight: 600; margin-bottom: 6px; }
+    #error-box pre {
+      font-size: 12px; color: var(--red);
+      white-space: pre-wrap; word-break: break-all;
+      font-family: 'Menlo', 'Consolas', monospace;
+    }
+
+    /* ── Results ── */
+    #results { display: none; }
+
+    .status-banner {
+      border-radius: 10px; padding: 20px 24px; margin-bottom: 16px;
+      display: flex; align-items: flex-start; gap: 16px;
+    }
+    .status-banner.fail { background: var(--red-light); border: 1px solid var(--red-border); }
+    .status-banner.warn { background: var(--amber-light); border: 1px solid var(--amber-border); }
+    .status-banner.pass { background: var(--green-light); border: 1px solid var(--green-border); }
+    .status-icon {
+      width: 36px; height: 36px; border-radius: 50%;
+      flex-shrink: 0; display: flex; align-items: center;
+      justify-content: center; font-size: 18px;
+    }
+    .status-banner.fail .status-icon { background: var(--red); color: #fff; }
+    .status-banner.warn .status-icon { background: #d97706; color: #fff; }
+    .status-banner.pass .status-icon { background: var(--green); color: #fff; }
+    .status-banner-text h2 { font-size: 17px; font-weight: 700; margin-bottom: 4px; }
+    .status-banner.fail h2 { color: var(--red); }
+    .status-banner.warn h2 { color: var(--amber); }
+    .status-banner.pass h2 { color: var(--green); }
+    .status-banner-text p { font-size: 14px; color: var(--navy-mid); line-height: 1.5; }
+
+    .summary-box {
+      background: var(--white); border: 1px solid var(--gray-200);
+      border-radius: 10px; padding: 16px 20px; margin-bottom: 24px;
+      font-size: 14px; line-height: 1.6; color: var(--navy);
+    }
+    .summary-box strong {
+      font-size: 11px; font-weight: 600; text-transform: uppercase;
+      letter-spacing: 0.07em; color: var(--gray-500);
+      display: block; margin-bottom: 6px;
+    }
+
+    .blocking-callout {
+      background: var(--red-light); border: 1px solid var(--red-border);
+      border-radius: 10px; padding: 16px 20px; margin-bottom: 24px;
+    }
+    .blocking-callout h3 {
+      font-size: 13px; font-weight: 700; text-transform: uppercase;
+      letter-spacing: 0.06em; color: var(--red); margin-bottom: 10px;
+    }
+    .blocking-issue {
+      display: flex; gap: 10px; margin-bottom: 8px;
+      font-size: 13px; align-items: flex-start;
+    }
+    .blocking-issue:last-child { margin-bottom: 0; }
+    .blocking-dot {
+      width: 6px; height: 6px; background: var(--red);
+      border-radius: 50%; flex-shrink: 0; margin-top: 5px;
+    }
+    .blocking-issue-text { color: var(--navy); line-height: 1.4; }
+    .blocking-issue-field { font-weight: 600; }
+
+    .sections-grid { display: flex; flex-direction: column; gap: 16px; margin-bottom: 16px; }
+
+    .section-card {
+      background: var(--white); border: 1px solid var(--gray-200);
+      border-radius: 10px; overflow: hidden;
+    }
+    .section-header {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 14px 20px; border-bottom: 1px solid var(--gray-100);
+      background: var(--gray-50);
+    }
+    .section-name { font-size: 14px; font-weight: 600; color: var(--navy); }
+
+    table { width: 100%; border-collapse: collapse; font-size: 13px; }
+    thead th {
+      text-align: left; padding: 10px 20px;
+      font-size: 11px; font-weight: 600;
+      text-transform: uppercase; letter-spacing: 0.06em;
+      color: var(--gray-500); border-bottom: 1px solid var(--gray-100);
+      background: var(--white);
+    }
+    tbody tr { border-bottom: 1px solid var(--gray-100); }
+    tbody tr:last-child { border-bottom: none; }
+    tbody td { padding: 10px 20px; vertical-align: top; line-height: 1.4; color: var(--navy); }
+    tbody tr.row-fail { background: rgba(217,43,43,0.04); }
+    tbody tr.row-warn { background: rgba(180,83,9,0.04); }
+    .col-field  { width: 22%; font-weight: 500; }
+    .col-value  { width: 24%; color: var(--gray-700); font-family: 'Menlo','Consolas',monospace; font-size: 12px; }
+    .col-status { width: 14%; }
+    .col-message { width: 40%; color: var(--gray-700); }
+
+    .badge {
+      display: inline-flex; align-items: center;
+      padding: 2px 8px; border-radius: 4px;
+      font-size: 11px; font-weight: 600;
+      letter-spacing: 0.04em; white-space: nowrap;
+    }
+    .badge-BLOCKING    { background: #fee2e2; color: #991b1b; }
+    .badge-WARNING     { background: #fef3c7; color: #92400e; }
+    .badge-PASS        { background: #dcfce7; color: #166534; }
+    .badge-SKIP        { background: var(--gray-100); color: var(--gray-500); }
+    .badge-CONDITIONAL { background: #e0e7ff; color: #3730a3; }
+    .badge-FAIL        { background: #fee2e2; color: #991b1b; }
+    .badge-WARN        { background: #fef3c7; color: #92400e; }
+    .badge-sec-PASS    { background: #dcfce7; color: #166534; }
+    .badge-sec-FAIL    { background: #fee2e2; color: #991b1b; }
+    .badge-sec-WARN    { background: #fef3c7; color: #92400e; }
+    .badge-sec-SKIP    { background: var(--gray-100); color: var(--gray-500); }
+
+    .cross-checks-card {
+      background: var(--white); border: 1px solid var(--gray-200);
+      border-radius: 10px; overflow: hidden; margin-bottom: 16px;
+    }
+    .cross-checks-header {
+      padding: 14px 20px; border-bottom: 1px solid var(--gray-100);
+      background: var(--gray-50); font-size: 14px; font-weight: 600; color: var(--navy);
+    }
+    .cross-check-row {
+      display: flex; align-items: flex-start; gap: 12px;
+      padding: 12px 20px; border-bottom: 1px solid var(--gray-100);
+    }
+    .cross-check-row:last-child { border-bottom: none; }
+    .cross-check-info { flex: 1; }
+    .cross-check-name { font-size: 13px; font-weight: 500; color: var(--navy); margin-bottom: 2px; }
+    .cross-check-msg  { font-size: 12px; color: var(--gray-700); line-height: 1.4; }
+
+    .btn-reset {
+      background: none; border: 1px solid var(--gray-200);
+      border-radius: 8px; padding: 8px 16px;
+      font-size: 13px; font-weight: 500; font-family: inherit;
+      color: var(--gray-700); cursor: pointer; margin-bottom: 24px;
+    }
+    .btn-reset:hover { border-color: var(--blue); color: var(--blue); }
+  </style>
+</head>
+<body>
+
+<header>
+  <div class="logo-mark">TC</div>
+  <h1>Proposal QA <span>— Pre-send checklist</span></h1>
+</header>
+
+<main>
+
+  <div class="upload-panel" id="upload-panel">
+    <div class="drop-zone" id="drop-zone">
+      <input type="file" id="file-input" accept="application/pdf,.pdf" />
+      <svg class="drop-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+        <polyline points="14 2 14 8 20 8"/>
+        <line x1="12" y1="18" x2="12" y2="12"/>
+        <line x1="9" y1="15" x2="15" y2="15"/>
+      </svg>
+      <p><strong>Click to upload</strong> or drag and drop your proposal</p>
+      <p style="margin-top:4px;font-size:12px;">PDF only</p>
+      <div class="file-name" id="file-name" style="display:none"></div>
+      <div class="file-type-error" id="file-type-error">Only PDF files are accepted.</div>
+    </div>
+    <button class="btn-validate" id="btn-validate" disabled>Validate Proposal</button>
+  </div>
+
+  <div id="loading">
+    <div class="spinner"></div>
+    <p>Validating proposal&hellip;</p>
+  </div>
+
+  <div id="error-box">
+    <h3>Something went wrong</h3>
+    <pre id="error-text"></pre>
+  </div>
+
+  <div id="results">
+    <button class="btn-reset" id="btn-reset">&#8592; Validate another proposal</button>
+
+    <div class="status-banner" id="status-banner">
+      <div class="status-icon" id="status-icon"></div>
+      <div class="status-banner-text">
+        <h2 id="banner-title"></h2>
+        <p id="banner-subtitle"></p>
+      </div>
+    </div>
+
+    <div class="summary-box">
+      <strong>Summary</strong>
+      <span id="summary-text"></span>
+    </div>
+
+    <div class="blocking-callout" id="blocking-callout" style="display:none">
+      <h3 id="blocking-callout-title"></h3>
+      <div id="blocking-issues-list"></div>
+    </div>
+
+    <div class="sections-grid" id="sections-grid"></div>
+
+    <div class="cross-checks-card">
+      <div class="cross-checks-header">Cross-checks</div>
+      <div id="cross-checks-list"></div>
+    </div>
+  </div>
+
+</main>
+
+<script>
+let selectedFile = null;
+
+const dropZone    = document.getElementById('drop-zone');
+const fileInput   = document.getElementById('file-input');
+const fileNameEl  = document.getElementById('file-name');
+const fileTypeErr = document.getElementById('file-type-error');
+
+function handleFile(file) {
+  fileTypeErr.style.display = 'none';
+  if (!file) return;
+  if (file.type !== 'application/pdf' && !file.name.toLowerCase().endsWith('.pdf')) {
+    fileTypeErr.style.display = 'block';
+    selectedFile = null;
+    fileNameEl.style.display = 'none';
+    document.getElementById('btn-validate').disabled = true;
+    return;
+  }
+  selectedFile = file;
+  fileNameEl.textContent   = file.name;
+  fileNameEl.style.display = 'inline-block';
+  document.getElementById('btn-validate').disabled = false;
+}
+
+fileInput.addEventListener('change', e => handleFile(e.target.files[0]));
+dropZone.addEventListener('dragover', e => { e.preventDefault(); dropZone.classList.add('drag-over'); });
+dropZone.addEventListener('dragleave', () => dropZone.classList.remove('drag-over'));
+dropZone.addEventListener('drop', e => {
+  e.preventDefault();
+  dropZone.classList.remove('drag-over');
+  handleFile(e.dataTransfer.files[0]);
+});
+
+document.getElementById('btn-validate').addEventListener('click', async () => {
+  if (!selectedFile) return;
+
+  document.getElementById('upload-panel').style.display = 'none';
+  document.getElementById('loading').style.display      = 'block';
+  document.getElementById('error-box').style.display    = 'none';
+  document.getElementById('results').style.display      = 'none';
+
+  try {
+    const form = new FormData();
+    form.append('proposal', selectedFile);
+
+    const resp = await fetch('/api/validate', { method: 'POST', body: form });
+    const data = await resp.json();
+
+    if (!resp.ok) {
+      throw new Error(data.error || `Server error ${resp.status}`);
+    }
+
+    renderResults(data);
+  } catch (err) {
+    document.getElementById('error-text').textContent = err.message;
+    document.getElementById('error-box').style.display    = 'block';
+    document.getElementById('upload-panel').style.display = 'block';
+  } finally {
+    document.getElementById('loading').style.display = 'none';
+  }
+});
+
+document.getElementById('btn-reset').addEventListener('click', () => {
+  document.getElementById('results').style.display      = 'none';
+  document.getElementById('error-box').style.display    = 'none';
+  document.getElementById('upload-panel').style.display = 'block';
+  selectedFile             = null;
+  fileNameEl.style.display = 'none';
+  fileTypeErr.style.display = 'none';
+  fileInput.value          = '';
+  document.getElementById('btn-validate').disabled = true;
+});
+
+// ── Render ────────────────────────────────────────────────────────────────────
+function renderResults(data) {
+  document.getElementById('results').style.display = 'block';
+
+  const banner  = document.getElementById('status-banner');
+  const iconEl  = document.getElementById('status-icon');
+  const titleEl = document.getElementById('banner-title');
+  const subEl   = document.getElementById('banner-subtitle');
+
+  banner.className = 'status-banner';
+  if (data.overall_status === 'FAIL') {
+    banner.classList.add('fail');
+    iconEl.textContent  = '✕';
+    titleEl.textContent = `Not ready to send — ${data.blocking_count} blocking issue${data.blocking_count !== 1 ? 's' : ''} found`;
+    const parts = [];
+    if (data.blocking_count) parts.push(`${data.blocking_count} blocking`);
+    if (data.warning_count)  parts.push(`${data.warning_count} warning${data.warning_count !== 1 ? 's' : ''}`);
+    subEl.textContent = parts.join(', ');
+  } else if (data.overall_status === 'PASS_WITH_WARNINGS') {
+    banner.classList.add('warn');
+    iconEl.textContent  = '!';
+    titleEl.textContent = 'Ready to send with cautions — review warnings below';
+    subEl.textContent   = data.warning_count ? `${data.warning_count} warning${data.warning_count !== 1 ? 's' : ''} to review` : '';
+  } else {
+    banner.classList.add('pass');
+    iconEl.textContent  = '✓';
+    titleEl.textContent = 'Good to go — proposal passed all checks';
+    subEl.textContent   = '';
+  }
+
+  document.getElementById('summary-text').textContent = data.summary || '';
+
+  const callout     = document.getElementById('blocking-callout');
+  const calloutList = document.getElementById('blocking-issues-list');
+  calloutList.innerHTML = '';
+
+  const blockingFields = [];
+  (data.sections || []).forEach(sec =>
+    (sec.fields || []).forEach(f => {
+      if (f.severity === 'BLOCKING' && f.status === 'FAIL')
+        blockingFields.push({ section: sec.section_name, field: f });
+    })
+  );
+
+  if (blockingFields.length > 0) {
+    document.getElementById('blocking-callout-title').textContent =
+      `${blockingFields.length} Blocking Issue${blockingFields.length !== 1 ? 's' : ''} — Must Fix Before Sending`;
+    blockingFields.forEach(({ section, field }) => {
+      const div = document.createElement('div');
+      div.className = 'blocking-issue';
+      div.innerHTML =
+        `<div class="blocking-dot"></div>` +
+        `<div class="blocking-issue-text">` +
+        `<span class="blocking-issue-field">${esc(field.field_name)}</span>` +
+        ` (${esc(section)}) — ${esc(field.message)}` +
+        `</div>`;
+      calloutList.appendChild(div);
+    });
+    callout.style.display = 'block';
+  } else {
+    callout.style.display = 'none';
+  }
+
+  const grid = document.getElementById('sections-grid');
+  grid.innerHTML = '';
+  (data.sections || []).forEach(sec => grid.appendChild(buildSectionCard(sec)));
+
+  const ccList = document.getElementById('cross-checks-list');
+  ccList.innerHTML = '';
+  (data.cross_checks || []).forEach(cc => {
+    const row = document.createElement('div');
+    row.className = 'cross-check-row';
+    const cls = cc.status === 'FAIL' ? 'badge-FAIL' : cc.status === 'WARN' ? 'badge-WARN' : 'badge-PASS';
+    row.innerHTML =
+      `<span class="badge ${cls}">${esc(cc.status)}</span>` +
+      `<div class="cross-check-info">` +
+      `<div class="cross-check-name">${esc(cc.check_name)}</div>` +
+      `<div class="cross-check-msg">${esc(cc.message)}</div>` +
+      `</div>`;
+    ccList.appendChild(row);
+  });
+}
+
+function buildSectionCard(sec) {
+  const card = document.createElement('div');
+  card.className = 'section-card';
+  card.innerHTML =
+    `<div class="section-header">` +
+    `<span class="section-name">${esc(sec.section_name)}</span>` +
+    `<span class="badge badge-sec-${sec.status}">${esc(sec.status)}</span>` +
+    `</div>` +
+    `<table><thead><tr>` +
+    `<th class="col-field">Field</th>` +
+    `<th class="col-value">Value Found</th>` +
+    `<th class="col-status">Status</th>` +
+    `<th class="col-message">Message</th>` +
+    `</tr></thead><tbody></tbody></table>`;
+
+  const tbody = card.querySelector('tbody');
+  (sec.fields || []).forEach(f => {
+    const tr = document.createElement('tr');
+    if (f.status === 'FAIL') tr.className = 'row-fail';
+    else if (f.status === 'WARN') tr.className = 'row-warn';
+
+    let badgeCls, badgeLabel;
+    if      (f.status === 'PASS')                            { badgeCls = 'badge-PASS';        badgeLabel = 'PASS'; }
+    else if (f.status === 'SKIP')                            { badgeCls = 'badge-SKIP';        badgeLabel = 'SKIP'; }
+    else if (f.status === 'FAIL' && f.severity==='BLOCKING') { badgeCls = 'badge-BLOCKING';    badgeLabel = 'BLOCKING'; }
+    else if (f.status === 'FAIL')                            { badgeCls = 'badge-FAIL';        badgeLabel = 'FAIL'; }
+    else if (f.status === 'WARN')                            { badgeCls = 'badge-WARNING';     badgeLabel = 'WARNING'; }
+    else                                                     { badgeCls = 'badge-CONDITIONAL'; badgeLabel = f.severity || 'CONDITIONAL'; }
+
+    const valueDisplay = f.value_found != null
+      ? esc(String(f.value_found))
+      : `<span style="color:var(--gray-500);font-style:italic">—</span>`;
+
+    tr.innerHTML =
+      `<td class="col-field">${esc(f.field_name)}</td>` +
+      `<td class="col-value">${valueDisplay}</td>` +
+      `<td class="col-status"><span class="badge ${badgeCls}">${badgeLabel}</span></td>` +
+      `<td class="col-message">${esc(f.message)}</td>`;
+    tbody.appendChild(tr);
+  });
+  return card;
+}
+
+function esc(str) {
+  if (str == null) return '';
+  return String(str)
+    .replace(/&/g, '&amp;').replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+}
+</script>
+</body>
+</html>

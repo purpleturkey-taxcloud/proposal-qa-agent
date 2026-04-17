@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>QA Agent — Admin</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --blue: #1B4DFF; --navy: #0A1628; --white: #fff;
+      --gray-50: #f8f9fc; --gray-100: #f0f2f7; --gray-200: #e2e6ef;
+      --gray-500: #6b7a99; --gray-700: #374166;
+      --red: #d92b2b; --red-light: #fff0f0; --red-border: #fcc;
+      --green: #15803d; --green-light: #f0fdf4; --green-border: #bbf7d0;
+    }
+    body { font-family: 'Inter', system-ui, sans-serif; background: var(--gray-50); color: var(--navy); min-height: 100vh; }
+    header {
+      background: var(--navy); padding: 0 32px; height: 56px;
+      display: flex; align-items: center; gap: 12px;
+    }
+    .logo-mark {
+      width: 28px; height: 28px; background: var(--blue); border-radius: 6px;
+      display: flex; align-items: center; justify-content: center;
+      font-weight: 700; font-size: 14px; color: #fff;
+    }
+    header h1 { font-size: 15px; font-weight: 600; color: #fff; }
+    header span { color: var(--gray-500); font-size: 13px; margin-left: 4px; }
+    main { max-width: 600px; margin: 0 auto; padding: 32px 24px; }
+
+    /* Login gate */
+    #login-gate {
+      background: var(--white); border: 1px solid var(--gray-200);
+      border-radius: 12px; padding: 32px; text-align: center;
+    }
+    #login-gate h2 { font-size: 16px; font-weight: 600; margin-bottom: 8px; }
+    #login-gate p { font-size: 13px; color: var(--gray-500); margin-bottom: 20px; }
+    .input-row { display: flex; gap: 8px; }
+    .input-row input {
+      flex: 1; height: 40px; border: 1px solid var(--gray-200);
+      border-radius: 8px; padding: 0 12px; font-size: 14px;
+      font-family: inherit; outline: none;
+    }
+    .input-row input:focus { border-color: var(--blue); box-shadow: 0 0 0 3px rgba(27,77,255,0.1); }
+    .btn-primary {
+      height: 40px; padding: 0 20px; background: var(--blue);
+      color: #fff; border: none; border-radius: 8px;
+      font-size: 14px; font-weight: 600; font-family: inherit; cursor: pointer;
+    }
+    .btn-primary:hover { background: #1340d6; }
+    .login-error { color: var(--red); font-size: 13px; margin-top: 10px; display: none; }
+
+    /* Admin panel */
+    #admin-panel { display: none; }
+    .panel {
+      background: var(--white); border: 1px solid var(--gray-200);
+      border-radius: 12px; padding: 24px; margin-bottom: 20px;
+    }
+    .panel h2 { font-size: 14px; font-weight: 600; margin-bottom: 4px; }
+    .panel p  { font-size: 13px; color: var(--gray-500); margin-bottom: 16px; }
+
+    .status-row {
+      display: flex; align-items: center; gap: 10px;
+      padding: 12px 16px; border-radius: 8px;
+      margin-bottom: 16px;
+    }
+    .status-row.loaded  { background: var(--green-light); border: 1px solid var(--green-border); }
+    .status-row.missing { background: var(--gray-100); border: 1px solid var(--gray-200); }
+    .status-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+    .status-dot.loaded  { background: var(--green); }
+    .status-dot.missing { background: var(--gray-500); }
+    .status-filename { font-size: 13px; font-weight: 500; flex: 1; }
+    .status-filename.none { color: var(--gray-500); font-weight: 400; }
+
+    .drop-zone {
+      border: 2px dashed var(--gray-200); border-radius: 8px;
+      padding: 28px; text-align: center; cursor: pointer;
+      position: relative; transition: border-color 0.15s, background 0.15s;
+    }
+    .drop-zone:hover, .drop-zone.drag-over {
+      border-color: var(--blue); background: rgba(27,77,255,0.03);
+    }
+    .drop-zone input { position: absolute; inset: 0; opacity: 0; cursor: pointer; width: 100%; height: 100%; }
+    .drop-zone p { font-size: 13px; color: var(--gray-500); }
+    .drop-zone strong { color: var(--blue); }
+
+    .btn-danger {
+      height: 36px; padding: 0 16px;
+      background: none; color: var(--red);
+      border: 1px solid var(--red-border); border-radius: 8px;
+      font-size: 13px; font-weight: 500; font-family: inherit; cursor: pointer;
+      margin-top: 10px;
+    }
+    .btn-danger:hover { background: var(--red-light); }
+
+    .toast {
+      position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%);
+      background: var(--navy); color: #fff; padding: 10px 20px;
+      border-radius: 8px; font-size: 13px; font-weight: 500;
+      opacity: 0; transition: opacity 0.2s; pointer-events: none;
+    }
+    .toast.show { opacity: 1; }
+
+    .uploading-msg { font-size: 13px; color: var(--gray-500); margin-top: 10px; display: none; }
+  </style>
+</head>
+<body>
+
+<header>
+  <div class="logo-mark">TC</div>
+  <h1>Proposal QA <span>— Admin</span></h1>
+</header>
+
+<main>
+
+  <!-- Login gate -->
+  <div id="login-gate">
+    <h2>Admin Access</h2>
+    <p>Enter your admin token to manage settings.</p>
+    <div class="input-row">
+      <input type="password" id="token-input" placeholder="Admin token" />
+      <button class="btn-primary" id="login-btn">Enter</button>
+    </div>
+    <div class="login-error" id="login-error">Incorrect token.</div>
+  </div>
+
+  <!-- Admin panel -->
+  <div id="admin-panel">
+
+    <div class="panel">
+      <h2>Pricing Table</h2>
+      <p>Upload your official pricing table once. Every proposal validation will automatically compare against it. Accepts PDF or CSV.</p>
+
+      <div class="status-row missing" id="pricing-status-row">
+        <div class="status-dot missing" id="pricing-dot"></div>
+        <span class="status-filename none" id="pricing-filename">Not loaded</span>
+      </div>
+
+      <div class="drop-zone" id="pricing-drop-zone">
+        <input type="file" id="pricing-input" accept="application/pdf,.pdf,.csv,text/csv,text/plain,.txt" />
+        <p><strong>Click to upload</strong> or drag and drop</p>
+        <p style="margin-top:4px;font-size:11px;">PDF or CSV</p>
+      </div>
+      <div class="uploading-msg" id="uploading-msg">Uploading&hellip;</div>
+
+      <div style="margin-top:10px">
+        <button class="btn-danger" id="remove-btn" style="display:none">Remove pricing table</button>
+      </div>
+    </div>
+
+  </div>
+
+</main>
+
+<div class="toast" id="toast"></div>
+
+<script>
+let adminToken = '';
+
+// ── Login ─────────────────────────────────────────────────────────────────────
+document.getElementById('login-btn').addEventListener('click', login);
+document.getElementById('token-input').addEventListener('keydown', e => { if (e.key === 'Enter') login(); });
+
+async function login() {
+  const token = document.getElementById('token-input').value.trim();
+  if (!token) return;
+  // Verify by hitting the status endpoint
+  const resp = await fetch('/api/admin/pricing-table', {
+    headers: { 'x-admin-token': token }
+  });
+  if (resp.status === 401) {
+    document.getElementById('login-error').style.display = 'block';
+    return;
+  }
+  adminToken = token;
+  document.getElementById('login-gate').style.display   = 'none';
+  document.getElementById('admin-panel').style.display  = 'block';
+  document.getElementById('login-error').style.display  = 'none';
+  const data = await resp.json();
+  renderPricingStatus(data);
+}
+
+// ── Pricing table status ──────────────────────────────────────────────────────
+function renderPricingStatus(data) {
+  const row      = document.getElementById('pricing-status-row');
+  const dot      = document.getElementById('pricing-dot');
+  const filename = document.getElementById('pricing-filename');
+  const removeBtn = document.getElementById('remove-btn');
+
+  if (data.loaded) {
+    row.className      = 'status-row loaded';
+    dot.className      = 'status-dot loaded';
+    filename.className = 'status-filename';
+    filename.textContent = data.filename;
+    removeBtn.style.display = '';
+  } else {
+    row.className      = 'status-row missing';
+    dot.className      = 'status-dot missing';
+    filename.className = 'status-filename none';
+    filename.textContent = 'Not loaded';
+    removeBtn.style.display = 'none';
+  }
+}
+
+// ── Upload ────────────────────────────────────────────────────────────────────
+const dropZone     = document.getElementById('pricing-drop-zone');
+const pricingInput = document.getElementById('pricing-input');
+
+pricingInput.addEventListener('change', e => { if (e.target.files[0]) uploadPricing(e.target.files[0]); });
+dropZone.addEventListener('dragover', e => { e.preventDefault(); dropZone.classList.add('drag-over'); });
+dropZone.addEventListener('dragleave', () => dropZone.classList.remove('drag-over'));
+dropZone.addEventListener('drop', e => {
+  e.preventDefault();
+  dropZone.classList.remove('drag-over');
+  if (e.dataTransfer.files[0]) uploadPricing(e.dataTransfer.files[0]);
+});
+
+async function uploadPricing(file) {
+  document.getElementById('uploading-msg').style.display = 'block';
+  const form = new FormData();
+  form.append('pricing_table', file);
+  const resp = await fetch('/api/admin/pricing-table', {
+    method: 'POST',
+    headers: { 'x-admin-token': adminToken },
+    body: form
+  });
+  document.getElementById('uploading-msg').style.display = 'none';
+  pricingInput.value = '';
+  if (resp.ok) {
+    const data = await resp.json();
+    renderPricingStatus({ loaded: true, filename: data.filename });
+    showToast('Pricing table saved.');
+  } else {
+    const data = await resp.json();
+    showToast('Error: ' + (data.error || 'Upload failed.'));
+  }
+}
+
+// ── Remove ────────────────────────────────────────────────────────────────────
+document.getElementById('remove-btn').addEventListener('click', async () => {
+  if (!confirm('Remove the pricing table? Future validations will not check against list prices.')) return;
+  await fetch('/api/admin/pricing-table', {
+    method: 'DELETE',
+    headers: { 'x-admin-token': adminToken }
+  });
+  renderPricingStatus({ loaded: false });
+  showToast('Pricing table removed.');
+});
+
+// ── Toast ─────────────────────────────────────────────────────────────────────
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 2800);
+}
+</script>
+</body>
+</html>

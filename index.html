@@ -1,0 +1,1741 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>TaxCloud Proposal QA</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --blue: #1B4DFF;
+      --blue-dark: #1340d6;
+      --navy: #0A1628;
+      --navy-mid: #1a2c47;
+      --white: #ffffff;
+      --gray-50: #f8f9fc;
+      --gray-100: #f0f2f7;
+      --gray-200: #e2e6ef;
+      --gray-500: #6b7a99;
+      --gray-700: #374166;
+      --red: #d92b2b;
+      --red-light: #fff0f0;
+      --red-border: #fcc;
+      --amber: #b45309;
+      --amber-light: #fffbeb;
+      --amber-border: #fde68a;
+      --green: #15803d;
+      --green-light: #f0fdf4;
+      --green-border: #bbf7d0;
+    }
+
+    body {
+      font-family: 'Inter', system-ui, sans-serif;
+      background: var(--gray-50);
+      color: var(--navy);
+      min-height: 100vh;
+    }
+
+    /* ── Header ── */
+    header {
+      background: var(--navy);
+      padding: 0 32px;
+      height: 56px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .logo-mark {
+      width: 28px;
+      height: 28px;
+      background: var(--blue);
+      border-radius: 6px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      font-size: 14px;
+      color: #fff;
+      flex-shrink: 0;
+    }
+    header h1 {
+      font-size: 15px;
+      font-weight: 600;
+      color: #fff;
+      letter-spacing: -0.01em;
+    }
+    header span {
+      color: var(--gray-500);
+      font-size: 13px;
+      margin-left: 4px;
+    }
+
+    /* ── Main layout ── */
+    main {
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 32px 24px 64px;
+    }
+
+    /* ── Setup panel ── */
+    .setup-panel {
+      background: var(--white);
+      border: 1px solid var(--gray-200);
+      border-radius: 12px;
+      padding: 24px;
+      margin-bottom: 24px;
+    }
+    .setup-panel h2 {
+      font-size: 13px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      color: var(--gray-500);
+      margin-bottom: 16px;
+    }
+
+    /* API key row */
+    .field-row {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      margin-bottom: 16px;
+    }
+    .field-row label {
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--gray-700);
+    }
+    .input-wrapper {
+      position: relative;
+      display: flex;
+    }
+    .input-wrapper input {
+      width: 100%;
+      height: 40px;
+      border: 1px solid var(--gray-200);
+      border-radius: 8px;
+      padding: 0 44px 0 12px;
+      font-size: 14px;
+      font-family: inherit;
+      color: var(--navy);
+      background: var(--white);
+      outline: none;
+      transition: border-color 0.15s;
+    }
+    .input-wrapper input:focus {
+      border-color: var(--blue);
+      box-shadow: 0 0 0 3px rgba(27,77,255,0.12);
+    }
+    .toggle-key {
+      position: absolute;
+      right: 10px;
+      top: 50%;
+      transform: translateY(-50%);
+      background: none;
+      border: none;
+      cursor: pointer;
+      color: var(--gray-500);
+      padding: 4px;
+      display: flex;
+      align-items: center;
+    }
+    .toggle-key:hover { color: var(--navy); }
+
+    /* Drop zone */
+    .drop-zone {
+      border: 2px dashed var(--gray-200);
+      border-radius: 10px;
+      padding: 32px 24px;
+      text-align: center;
+      cursor: pointer;
+      transition: border-color 0.15s, background 0.15s;
+      position: relative;
+    }
+    .drop-zone:hover, .drop-zone.drag-over {
+      border-color: var(--blue);
+      background: rgba(27,77,255,0.03);
+    }
+    .drop-zone input[type="file"] {
+      position: absolute;
+      inset: 0;
+      opacity: 0;
+      cursor: pointer;
+      width: 100%;
+      height: 100%;
+    }
+    .drop-icon {
+      width: 40px;
+      height: 40px;
+      margin: 0 auto 12px;
+      color: var(--blue);
+    }
+    .drop-zone p {
+      font-size: 14px;
+      color: var(--gray-500);
+    }
+    .drop-zone strong {
+      color: var(--blue);
+      font-weight: 600;
+    }
+    .file-name {
+      margin-top: 10px;
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--navy);
+      background: var(--gray-100);
+      display: inline-block;
+      padding: 4px 10px;
+      border-radius: 6px;
+    }
+    .file-type-error {
+      color: var(--red);
+      font-size: 13px;
+      margin-top: 8px;
+    }
+
+    /* Validate button */
+    .btn-validate {
+      width: 100%;
+      height: 44px;
+      background: var(--blue);
+      color: #fff;
+      border: none;
+      border-radius: 8px;
+      font-size: 15px;
+      font-weight: 600;
+      font-family: inherit;
+      cursor: pointer;
+      margin-top: 16px;
+      transition: background 0.15s;
+    }
+    .btn-validate:hover:not(:disabled) { background: var(--blue-dark); }
+    .btn-validate:disabled { opacity: 0.5; cursor: not-allowed; }
+
+    .api-missing-msg {
+      color: var(--red);
+      font-size: 13px;
+      margin-top: 8px;
+      display: none;
+    }
+
+    /* ── Loading ── */
+    #loading {
+      display: none;
+      text-align: center;
+      padding: 48px 24px;
+    }
+    .spinner {
+      width: 40px;
+      height: 40px;
+      border: 3px solid var(--gray-200);
+      border-top-color: var(--blue);
+      border-radius: 50%;
+      animation: spin 0.75s linear infinite;
+      margin: 0 auto 16px;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+    #loading p {
+      font-size: 15px;
+      color: var(--gray-500);
+    }
+
+    /* ── Error ── */
+    #error-box {
+      display: none;
+      background: var(--red-light);
+      border: 1px solid var(--red-border);
+      border-radius: 10px;
+      padding: 16px 20px;
+      margin-bottom: 24px;
+    }
+    #error-box h3 { color: var(--red); font-size: 14px; font-weight: 600; margin-bottom: 6px; }
+    #error-box pre {
+      font-size: 12px;
+      color: var(--red);
+      white-space: pre-wrap;
+      word-break: break-all;
+      font-family: 'Menlo', 'Consolas', monospace;
+    }
+
+    /* ── Results ── */
+    #results { display: none; }
+
+    /* Status banner */
+    .status-banner {
+      border-radius: 10px;
+      padding: 20px 24px;
+      margin-bottom: 16px;
+      display: flex;
+      align-items: flex-start;
+      gap: 16px;
+    }
+    .status-banner.fail {
+      background: var(--red-light);
+      border: 1px solid var(--red-border);
+    }
+    .status-banner.warn {
+      background: var(--amber-light);
+      border: 1px solid var(--amber-border);
+    }
+    .status-banner.pass {
+      background: var(--green-light);
+      border: 1px solid var(--green-border);
+    }
+    .status-icon {
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      flex-shrink: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 18px;
+    }
+    .status-banner.fail .status-icon { background: var(--red); color: #fff; }
+    .status-banner.warn .status-icon { background: #d97706; color: #fff; }
+    .status-banner.pass .status-icon { background: var(--green); color: #fff; }
+    .status-banner-text h2 {
+      font-size: 17px;
+      font-weight: 700;
+      margin-bottom: 4px;
+    }
+    .status-banner.fail h2 { color: var(--red); }
+    .status-banner.warn h2 { color: var(--amber); }
+    .status-banner.pass h2 { color: var(--green); }
+    .status-banner-text p {
+      font-size: 14px;
+      color: var(--navy-mid);
+      line-height: 1.5;
+    }
+
+    /* Summary */
+    .summary-box {
+      background: var(--white);
+      border: 1px solid var(--gray-200);
+      border-radius: 10px;
+      padding: 16px 20px;
+      margin-bottom: 24px;
+      font-size: 14px;
+      line-height: 1.6;
+      color: var(--navy);
+    }
+    .summary-box strong {
+      font-size: 11px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.07em;
+      color: var(--gray-500);
+      display: block;
+      margin-bottom: 6px;
+    }
+
+    /* Blocking issues callout */
+    .blocking-callout {
+      background: var(--red-light);
+      border: 1px solid var(--red-border);
+      border-radius: 10px;
+      padding: 16px 20px;
+      margin-bottom: 24px;
+    }
+    .blocking-callout h3 {
+      font-size: 13px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      color: var(--red);
+      margin-bottom: 10px;
+    }
+    .blocking-issue {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 8px;
+      font-size: 13px;
+      align-items: flex-start;
+    }
+    .blocking-issue:last-child { margin-bottom: 0; }
+    .blocking-dot {
+      width: 6px;
+      height: 6px;
+      background: var(--red);
+      border-radius: 50%;
+      flex-shrink: 0;
+      margin-top: 5px;
+    }
+    .blocking-issue-text { color: var(--navy); line-height: 1.4; }
+    .blocking-issue-field { font-weight: 600; }
+
+    /* Section cards */
+    .sections-grid { display: flex; flex-direction: column; gap: 16px; margin-bottom: 16px; }
+
+    .section-card {
+      background: var(--white);
+      border: 1px solid var(--gray-200);
+      border-radius: 10px;
+      overflow: hidden;
+    }
+    .section-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 14px 20px;
+      border-bottom: 1px solid var(--gray-100);
+      background: var(--gray-50);
+    }
+    .section-name {
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--navy);
+    }
+
+    /* Field table */
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 13px;
+    }
+    thead th {
+      text-align: left;
+      padding: 10px 20px;
+      font-size: 11px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      color: var(--gray-500);
+      border-bottom: 1px solid var(--gray-100);
+      background: var(--white);
+    }
+    tbody tr { border-bottom: 1px solid var(--gray-100); }
+    tbody tr:last-child { border-bottom: none; }
+    tbody td {
+      padding: 10px 20px;
+      vertical-align: top;
+      line-height: 1.4;
+      color: var(--navy);
+    }
+    tbody tr.row-fail { background: rgba(217,43,43,0.04); }
+    tbody tr.row-warn { background: rgba(180,83,9,0.04); }
+
+    .col-field { width: 22%; font-weight: 500; }
+    .col-value { width: 24%; color: var(--gray-700); font-family: 'Menlo','Consolas',monospace; font-size: 12px; }
+    .col-status { width: 14%; }
+    .col-message { width: 40%; color: var(--gray-700); }
+
+    /* Badges */
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      padding: 2px 8px;
+      border-radius: 4px;
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 0.04em;
+      white-space: nowrap;
+    }
+    .badge-BLOCKING    { background: #fee2e2; color: #991b1b; }
+    .badge-WARNING     { background: #fef3c7; color: #92400e; }
+    .badge-PASS        { background: #dcfce7; color: #166534; }
+    .badge-SKIP        { background: var(--gray-100); color: var(--gray-500); }
+    .badge-CONDITIONAL { background: #e0e7ff; color: #3730a3; }
+    .badge-FAIL        { background: #fee2e2; color: #991b1b; }
+    .badge-WARN        { background: #fef3c7; color: #92400e; }
+    .badge-sec-PASS    { background: #dcfce7; color: #166534; }
+    .badge-sec-FAIL    { background: #fee2e2; color: #991b1b; }
+    .badge-sec-WARN    { background: #fef3c7; color: #92400e; }
+    .badge-sec-SKIP    { background: var(--gray-100); color: var(--gray-500); }
+
+    /* Cross-checks card */
+    .cross-checks-card {
+      background: var(--white);
+      border: 1px solid var(--gray-200);
+      border-radius: 10px;
+      overflow: hidden;
+      margin-bottom: 16px;
+    }
+    .cross-checks-header {
+      padding: 14px 20px;
+      border-bottom: 1px solid var(--gray-100);
+      background: var(--gray-50);
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--navy);
+    }
+    .cross-check-row {
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+      padding: 12px 20px;
+      border-bottom: 1px solid var(--gray-100);
+    }
+    .cross-check-row:last-child { border-bottom: none; }
+    .cross-check-info { flex: 1; }
+    .cross-check-name { font-size: 13px; font-weight: 500; color: var(--navy); margin-bottom: 2px; }
+    .cross-check-msg  { font-size: 12px; color: var(--gray-700); line-height: 1.4; }
+
+    /* Pricing table admin strip */
+    .pricing-strip {
+      margin-top: 20px;
+      padding-top: 16px;
+      border-top: 1px solid var(--gray-100);
+    }
+    .pricing-strip-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+    }
+    .pricing-strip-label {
+      font-size: 11px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.07em;
+      color: var(--gray-500);
+    }
+    .pricing-status {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex: 1;
+    }
+    .pricing-dot {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      flex-shrink: 0;
+    }
+    .pricing-dot.loaded  { background: var(--green); }
+    .pricing-dot.missing { background: var(--gray-200); }
+    .pricing-filename {
+      font-size: 12px;
+      color: var(--navy);
+      font-weight: 500;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      max-width: 280px;
+    }
+    .pricing-filename.none { color: var(--gray-500); font-weight: 400; }
+    .pricing-actions {
+      display: flex;
+      gap: 6px;
+      flex-shrink: 0;
+    }
+    .btn-sm {
+      height: 28px;
+      padding: 0 10px;
+      border-radius: 6px;
+      font-size: 12px;
+      font-weight: 500;
+      font-family: inherit;
+      cursor: pointer;
+      border: 1px solid var(--gray-200);
+      background: var(--white);
+      color: var(--gray-700);
+      transition: border-color 0.12s, color 0.12s;
+      white-space: nowrap;
+    }
+    .btn-sm:hover { border-color: var(--blue); color: var(--blue); }
+    .btn-sm.danger:hover { border-color: var(--red); color: var(--red); }
+    .pricing-upload-zone {
+      display: none;
+      margin-top: 12px;
+      border: 2px dashed var(--gray-200);
+      border-radius: 8px;
+      padding: 20px;
+      text-align: center;
+      cursor: pointer;
+      position: relative;
+      transition: border-color 0.15s, background 0.15s;
+    }
+    .pricing-upload-zone:hover, .pricing-upload-zone.drag-over {
+      border-color: var(--blue);
+      background: rgba(27,77,255,0.03);
+    }
+    .pricing-upload-zone input[type="file"] {
+      position: absolute;
+      inset: 0;
+      opacity: 0;
+      cursor: pointer;
+      width: 100%;
+      height: 100%;
+    }
+    .pricing-upload-zone p { font-size: 13px; color: var(--gray-500); }
+    .pricing-upload-zone strong { color: var(--blue); }
+    .pricing-size-error {
+      font-size: 12px;
+      color: var(--red);
+      margin-top: 8px;
+      display: none;
+    }
+    .pricing-type-error {
+      font-size: 12px;
+      color: var(--red);
+      margin-top: 8px;
+      display: none;
+    }
+
+    /* Settings rows */
+    .settings-toggle {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      background: none;
+      border: none;
+      cursor: pointer;
+      font-size: 12px;
+      font-weight: 600;
+      font-family: inherit;
+      color: var(--gray-500);
+      padding: 0;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      width: 100%;
+      text-align: left;
+    }
+    .settings-toggle:hover { color: var(--navy); }
+    .settings-caret { margin-left: auto; transition: transform 0.2s; }
+    .settings-caret.open { transform: rotate(180deg); }
+    #settings-config-badges { display: flex; gap: 4px; margin-left: 4px; }
+    .cfg-badge {
+      width: 6px; height: 6px; border-radius: 50%;
+    }
+    .cfg-badge.ok { background: var(--green); }
+    .cfg-badge.missing { background: var(--gray-200); }
+
+    .settings-body {
+      display: none;
+      margin-top: 14px;
+    }
+    .settings-body.open { display: block; }
+
+    .settings-row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .settings-row-label {
+      font-size: 12px;
+      font-weight: 500;
+      color: var(--gray-700);
+      width: 90px;
+      flex-shrink: 0;
+    }
+    .settings-row-status {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      flex: 1;
+      min-width: 0;
+    }
+    .key-input-row {
+      display: flex;
+      gap: 6px;
+      margin-top: 8px;
+      align-items: center;
+    }
+
+    /* Reset button */
+    .btn-reset {
+      background: none;
+      border: 1px solid var(--gray-200);
+      border-radius: 8px;
+      padding: 8px 16px;
+      font-size: 13px;
+      font-weight: 500;
+      font-family: inherit;
+      color: var(--gray-700);
+      cursor: pointer;
+      margin-bottom: 24px;
+    }
+    .btn-reset:hover { border-color: var(--blue); color: var(--blue); }
+  </style>
+</head>
+<body>
+
+<header>
+  <div class="logo-mark">TC</div>
+  <h1>Proposal QA <span>— Pre-send checklist</span></h1>
+</header>
+
+<main>
+
+  <!-- Setup panel -->
+  <div class="setup-panel" id="setup-panel">
+    <h2>Configuration</h2>
+
+    <!-- Rep-facing: proposal upload only -->
+    <div class="field-row" style="margin-bottom:0">
+      <label>Proposal PDF</label>
+      <div class="drop-zone" id="drop-zone">
+        <input type="file" id="file-input" accept="application/pdf,.pdf" />
+        <svg class="drop-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+          <polyline points="14 2 14 8 20 8"/>
+          <line x1="12" y1="18" x2="12" y2="12"/>
+          <line x1="9" y1="15" x2="15" y2="15"/>
+        </svg>
+        <p><strong>Click to upload</strong> or drag and drop</p>
+        <p style="margin-top:4px;font-size:12px;">PDF only</p>
+        <div class="file-name" id="file-name" style="display:none"></div>
+        <div class="file-type-error" id="file-type-error" style="display:none">Only PDF files are accepted.</div>
+      </div>
+    </div>
+
+    <div class="api-missing-msg" id="api-missing-msg" style="margin-top:10px;">
+      API key not configured — expand Settings below to add it.
+    </div>
+
+    <button class="btn-validate" id="btn-validate" disabled>Validate Proposal</button>
+
+    <!-- Admin settings strip (collapsed by default once configured) -->
+    <div class="pricing-strip">
+      <button class="settings-toggle" id="settings-toggle" type="button">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+        Settings
+        <span id="settings-config-badges"></span>
+        <svg class="settings-caret" id="settings-caret" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+      </button>
+
+      <div class="settings-body" id="settings-body">
+
+        <!-- API Key -->
+        <div class="settings-row">
+          <div class="settings-row-label">API Key</div>
+          <div class="settings-row-status" id="key-status-display">
+            <span class="pricing-dot missing" id="key-dot"></span>
+            <span class="pricing-filename none" id="key-status-text">Not configured</span>
+          </div>
+          <div class="pricing-actions">
+            <button class="btn-sm" id="key-edit-btn" type="button">Set key</button>
+          </div>
+        </div>
+        <div class="key-input-row" id="key-input-row" style="display:none">
+          <div class="input-wrapper" style="flex:1">
+            <input type="password" id="api-key" placeholder="sk-ant-..." autocomplete="off" />
+            <button class="toggle-key" id="toggle-key" type="button" title="Show / hide key">
+              <svg id="eye-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
+                <circle cx="12" cy="12" r="3"/>
+              </svg>
+              <svg id="eye-off-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:none">
+                <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"/>
+                <line x1="1" y1="1" x2="23" y2="23"/>
+              </svg>
+            </button>
+          </div>
+          <button class="btn-sm" id="key-save-btn" type="button" style="background:var(--blue);color:#fff;border-color:var(--blue)">Save</button>
+          <button class="btn-sm danger" id="key-clear-btn" type="button">Clear</button>
+        </div>
+
+        <!-- Pricing Table -->
+        <div class="settings-row" style="margin-top:10px">
+          <div class="settings-row-label">Pricing Table</div>
+          <div class="settings-row-status">
+            <span class="pricing-dot missing" id="pricing-dot"></span>
+            <span class="pricing-filename none" id="pricing-status-text">Not loaded</span>
+          </div>
+          <div class="pricing-actions">
+            <button class="btn-sm" id="pricing-upload-btn" type="button">Upload</button>
+            <button class="btn-sm danger" id="pricing-clear-btn" type="button" style="display:none">Remove</button>
+          </div>
+        </div>
+        <div class="pricing-upload-zone" id="pricing-upload-zone">
+          <input type="file" id="pricing-file-input" accept="application/pdf,.pdf,.csv,text/csv,text/plain,.txt" />
+          <p><strong>Click to upload</strong> or drag and drop</p>
+          <p style="margin-top:2px;font-size:11px;margin-bottom:0">PDF or CSV</p>
+          <div class="pricing-size-error" id="pricing-size-error">File too large for browser storage. Export as CSV and try again.</div>
+          <div class="pricing-type-error" id="pricing-type-error">Only PDF or CSV files are accepted.</div>
+        </div>
+
+      </div><!-- /settings-body -->
+    </div><!-- /pricing-strip -->
+  </div>
+
+  <!-- Loading -->
+  <div id="loading">
+    <div class="spinner"></div>
+    <p>Validating proposal&hellip;</p>
+  </div>
+
+  <!-- Error -->
+  <div id="error-box">
+    <h3>Something went wrong</h3>
+    <pre id="error-text"></pre>
+  </div>
+
+  <!-- Results -->
+  <div id="results">
+    <button class="btn-reset" id="btn-reset">&#8592; Validate another proposal</button>
+
+    <div class="status-banner" id="status-banner">
+      <div class="status-icon" id="status-icon"></div>
+      <div class="status-banner-text">
+        <h2 id="banner-title"></h2>
+        <p id="banner-subtitle"></p>
+      </div>
+    </div>
+
+    <div class="summary-box">
+      <strong>Summary</strong>
+      <span id="summary-text"></span>
+    </div>
+
+    <div class="blocking-callout" id="blocking-callout" style="display:none">
+      <h3 id="blocking-callout-title"></h3>
+      <div id="blocking-issues-list"></div>
+    </div>
+
+    <div class="sections-grid" id="sections-grid"></div>
+
+    <div class="cross-checks-card">
+      <div class="cross-checks-header">Cross-checks</div>
+      <div id="cross-checks-list"></div>
+    </div>
+  </div>
+
+</main>
+
+<script>
+// ─────────────────────────────────────────────────────────────────────────────
+// System prompt (embedded from system_prompt.md)
+// ─────────────────────────────────────────────────────────────────────────────
+const SYSTEM_PROMPT = `# TaxCloud Proposal QA Agent
+
+You are a pre-send proposal quality assurance agent for TaxCloud sales reps. Your job is to review a TaxCloud sales proposal PDF and return a structured validation report before it is sent to a prospect.
+
+You have two goals that must both be satisfied:
+1. Ensure the proposal is commercially sound and ready for the prospect to receive.
+2. Ensure the proposal contains everything the onboarding team needs to successfully onboard the customer after signing.
+
+## Critical context
+
+This is a PRE-SEND check. The prospect has NOT yet signed. Do NOT flag missing prospect signatures, PandaDoc certificates, or signer timestamps — those are post-send artifacts and are explicitly out of scope.
+
+The proposal serves two audiences simultaneously:
+- The PROSPECT: who needs to understand the deal, the pricing, and what they are signing
+- The ONBOARDING TEAM: who picks up this document after signing and uses it to configure the customer account
+
+Both audiences must be served. A field that satisfies the prospect but is vague for onboarding is still a failure.
+
+## Output format
+
+You MUST return a single valid JSON object. No markdown. No explanation. No code fences. No text before or after the JSON. Return only the raw JSON object.
+
+The JSON must match this exact shape:
+
+{
+  "overall_status": "PASS" or "FAIL" or "PASS_WITH_WARNINGS",
+  "blocking_count": integer,
+  "warning_count": integer,
+  "sections": [
+    {
+      "section_id": string,
+      "section_name": string,
+      "status": "PASS" or "FAIL" or "WARN" or "SKIP",
+      "fields": [
+        {
+          "field_id": string,
+          "field_name": string,
+          "severity": "BLOCKING" or "WARNING" or "CONDITIONAL",
+          "status": "PASS" or "FAIL" or "WARN" or "SKIP",
+          "value_found": string or null,
+          "message": string
+        }
+      ]
+    }
+  ],
+  "cross_checks": [
+    {
+      "check_id": string,
+      "check_name": string,
+      "status": "PASS" or "FAIL" or "WARN",
+      "message": string
+    }
+  ],
+  "summary": string
+}
+
+Rules:
+- overall_status is "FAIL" if ANY field with severity "BLOCKING" has status "FAIL"
+- overall_status is "PASS_WITH_WARNINGS" if no blocking failures exist but WARNING fields have status "WARN"
+- overall_status is "PASS" only if all fields pass or are SKIP
+- blocking_count = number of BLOCKING fields with status FAIL
+- warning_count = number of WARNING fields with status WARN
+- summary = 2-3 plain sentences a rep can read in 10 seconds. Lead with what is wrong if FAIL, lead with what is good if PASS.
+- For value_found: include the actual text found in the document (truncated to 80 chars if long), or null if not found
+- CONDITIONAL fields should be SKIP if the condition does not apply, FAIL if the condition applies but the field is missing
+
+
+## Section 1 — Rep and Prospect Identity
+
+Location: Cover page, "Prepared by" and "Prepared for" fields
+
+field_id: S1_REP_NAME
+field_name: Rep name (Prepared by)
+severity: BLOCKING
+Pass: A real person's name is present
+Fail: Blank, "Rep Name", or "TaxCloud" alone with no person's name
+
+field_id: S1_PROSPECT_NAME
+field_name: Prospect contact name (Prepared for)
+severity: BLOCKING
+Pass: A real person's name is present
+Fail: Blank or a generic placeholder
+
+field_id: S1_COMPANY_NAME
+field_name: Prospect company name
+severity: BLOCKING
+Pass: Company name is present and used consistently across the document
+Fail: Blank, or different names used in different sections
+
+
+## Section 2 — Scope of Work (States Table)
+
+Location: "Scope of Work" section, the states grid
+
+A state is "active" if it has an X in the File column. SST member states are: Arkansas, Georgia, Indiana, Iowa, Kansas, Kentucky, Michigan, Minnesota, Nebraska, Nevada, New Jersey, North Carolina, North Dakota, Ohio, Oklahoma, Rhode Island, South Dakota, Tennessee, Utah, Vermont, Washington, West Virginia, Wisconsin, Wyoming.
+
+field_id: S2_FILE_MARKS
+field_name: File column values
+severity: BLOCKING
+Pass: Every state row has either an X or an explicit dash — no blanks
+Fail: Any state row where the File column appears blank rather than a dash
+
+field_id: S2_NEXUS_TYPE
+field_name: Nexus type for active states
+severity: BLOCKING
+Pass: Every state with File=X has P (Physical) or E (Economic) in the Nexus column
+Fail: File=X but Nexus column is blank for that state
+
+field_id: S2_FREQUENCY
+field_name: Filing frequency in Notes
+severity: BLOCKING
+Pass: Every state with File=X has a filing frequency in the Notes column (Monthly, Quarterly, or Annual)
+Fail: File=X but no frequency noted
+
+field_id: S2_SST_ID
+field_name: SST ID status noted
+severity: WARNING
+Pass: For SST member states with File=X, the Notes column mentions SST ID status (e.g. "Need SST ID") or it is clear the customer is new with no prior SST ID
+Warn: SST member state with File=X and no mention of SST ID situation
+
+field_id: S2_PA_LABEL
+field_name: Pennsylvania labeled Not SST
+severity: BLOCKING
+Pass: If Pennsylvania appears in scope with File=X, it is labeled "Not SST"
+Fail: Pennsylvania has File=X but is not labeled "Not SST" — onboarding will incorrectly route it as auto-file
+Note: If Pennsylvania is not in scope, mark this field SKIP
+
+field_id: S2_HAS_ACTIVE
+field_name: At least one state is active
+severity: WARNING
+Pass: At least one state has File=X
+Warn: All states show dashes — no filing scope is defined
+
+
+## Section 3 — Contract Terms and Discount Summary
+
+Location: "Pricing" section, the fields at the top including the Proposal Expires box and the descriptive text box directly below it
+
+IMPORTANT: The descriptive text box below "Proposal Expires" is where the rep must write a plain-English summary of the specific discounts being offered. The default boilerplate text reads: "This pricing and discounts will be applied to the first contract term if the contract is signed by Proposal Expiration date. Pricing and discounts expire at the end of the contract term in this agreement." This boilerplate ALONE is a FAIL — the rep must have added specific discount information beyond or instead of the boilerplate.
+
+field_id: S3_DISCOUNT_NARRATIVE
+field_name: Discount summary narrative
+severity: BLOCKING
+Pass: The text box contains a specific description of discounts being offered — naming the type of discount and the dollar amount or percentage for each. The boilerplate text alone is not sufficient.
+Fail: The box contains only the default boilerplate with no specific discount details, OR the box is blank, OR discounts exist in the pricing tables but are not mentioned here
+
+field_id: S3_EXPIRY_DATE
+field_name: Proposal expiration date
+severity: BLOCKING
+Pass: A specific date is present in the Proposal Expires field
+Fail: Blank or a placeholder
+
+field_id: S3_EXPIRY_FUTURE
+field_name: Expiration date is in the future
+severity: BLOCKING
+Pass: The expiration date is after today's date
+Fail: The date is today or in the past — the proposal is already expired
+
+field_id: S3_TERM
+field_name: Contract subscription term
+severity: BLOCKING
+Pass: An explicit duration is stated (e.g. "1 Year")
+Fail: Blank
+
+field_id: S3_START
+field_name: Contract start date
+severity: BLOCKING
+Pass: "Date of Signing" or a specific date is present
+Fail: Blank
+
+field_id: S3_END
+field_name: Contract end date
+severity: BLOCKING
+Pass: A duration or date is present and is consistent with the subscription term
+Fail: Blank or inconsistent with the stated term
+
+field_id: S3_BILLING
+field_name: Billing cycle
+severity: BLOCKING
+Pass: "Annual" or "Monthly" is explicitly stated
+Fail: Blank
+
+
+## Section 4 — Onboarding Details
+
+Location: "Onboarding Proposal" section
+
+This is the primary handoff document for the onboarding team. Be strict here. Vague values directly delay the customer going live.
+
+field_id: S4_INTEGRATION
+field_name: Integration platform
+severity: BLOCKING
+Pass: A specific named platform is stated (e.g. BigCommerce, Shopify, WooCommerce, Magento, Salesforce, API, CSV)
+Fail: "TBD", blank, or a generic phrase like "ecommerce platform"
+
+field_id: S4_GOLIVE
+field_name: Estimated integration go-live date
+severity: BLOCKING
+Pass: A specific date is present
+Fail: Blank or "TBD"
+
+field_id: S4_FIRST_FILING
+field_name: First filing period
+severity: BLOCKING
+Pass: A month and year are stated (e.g. "April filed in May 2026")
+Fail: Blank
+
+field_id: S4_EXEMPTIONS
+field_name: Product exemptions
+severity: BLOCKING
+Pass: Explicitly "Yes" or "No" — not blank
+Fail: Blank
+
+field_id: S4_CERTS
+field_name: Exemption certifications
+severity: BLOCKING
+Pass: Explicitly "None" or a description of what certificates are in scope — not blank
+Fail: Blank
+
+field_id: S4_SST_MIGRATION
+field_name: Prior provider SST ID flag
+severity: WARNING
+Pass: If SST member states are in scope with File=X, there is some indication of whether the customer is migrating from another provider and whether an SST ID needs to be released
+Warn: SST states in scope with no mention of prior provider or SST ID handoff situation
+
+field_id: S4_API_TESTING
+field_name: API call types noted
+severity: CONDITIONAL
+Condition applies if: the integration platform is API-based
+Pass: The proposal mentions that the merchant must test lookup, authorize, and capture call types
+Fail: Integration is API-based but no mention of API call testing requirement
+Skip if: integration platform is not API-based
+
+
+## Section 5 — Pricing and Subscription
+
+Location: "Pricing" section, the subscription tables
+
+field_id: S5_PLAN
+field_name: Plan type selected
+severity: BLOCKING
+Pass: "Premium" or "Starter" is explicitly named in the subscription section
+Fail: Blank or ambiguous
+
+field_id: S5_ORDER_TIER
+field_name: Annual order tier price
+severity: BLOCKING
+Pass: A non-zero dollar amount is present for the Annual Order Tier line
+Fail: Blank or $0
+
+field_id: S5_FILING_TIER
+field_name: Filing tier return count and price
+severity: BLOCKING
+Pass: A return count (e.g. "60 Returns") and a dollar amount are both present
+Fail: Either the count or the price is blank
+
+field_id: S5_OB_FEE
+field_name: Onboarding fee and discount
+severity: BLOCKING
+Pass: The onboarding fee shows both a list price and a discount amount, and the subtotal equals list price minus discount
+Fail: Discount is applied but not shown as a line item, or the math is wrong
+
+field_id: S5_TOTAL_MATH
+field_name: Subscription total math
+severity: BLOCKING
+Pass: Total Subscription Fees equals Annual Order Tier subtotal plus Filing Tier subtotal
+Fail: The numbers do not add up
+
+field_id: S5_CO_LA
+field_name: CO and LA surcharge noted
+severity: CONDITIONAL
+Condition applies if: Colorado or Louisiana has File=X in the states table
+Pass: The pricing section mentions the applicable surcharge (Colorado +$60, Louisiana +$30)
+Fail: CO or LA is in filing scope but the surcharge note is absent
+Skip if: Neither Colorado nor Louisiana is in filing scope
+
+
+## Section 6 — Account Provisioning
+
+Location: "Payment and Account Provisioning" section at the end of the document
+
+field_id: S6_BNAME
+field_name: Legal business name
+severity: BLOCKING
+Pass: A company name is present in the provisioning section and matches the cover page
+Fail: Blank or inconsistent with the cover page
+
+field_id: S6_ADDRESS
+field_name: Business address completeness
+severity: BLOCKING
+Pass: A street address, city, state, and ZIP code are all present
+Fail: Any component is missing
+
+field_id: S6_EMAIL
+field_name: Account email address
+severity: BLOCKING
+Pass: A valid email address is present (contains @ and a domain)
+Fail: Blank or malformed
+
+field_id: S6_PHONE
+field_name: Merchant phone number
+severity: WARNING
+Pass: A phone number is present
+Warn: Missing
+
+field_id: S6_ACH
+field_name: ACH originator ID noted
+severity: CONDITIONAL
+Condition applies if: ACH or bank debit is mentioned as a payment method
+Pass: The originator ID 7891460966 is present and unmodified
+Fail: ACH is mentioned but the originator ID is absent or the number has been changed
+Skip if: ACH is not mentioned
+
+
+## Cross-checks
+
+Run these after evaluating all sections.
+
+check_id: CC_DISCOUNT_MATCH
+check_name: Discount narrative matches pricing tables
+Pass: Every discount dollar amount in the S3 narrative appears as a matching line item in the pricing tables, and every discount line item in the tables is mentioned in the narrative
+Fail: Amounts in the narrative do not match the line items, or line items exist that are not mentioned in the narrative
+
+check_id: CC_GOLIVE_FILING
+check_name: Go-live date consistent with first filing period
+Pass: The first filing period is the same month as or a later month than the go-live date
+Warn: The first filing period is earlier than the go-live date — indicates a copy-paste error from a prior proposal
+
+check_id: CC_COMPANY_CONSISTENT
+check_name: Company name consistent across document
+Pass: The company name on the cover, in the scope section, and in the provisioning section all match
+Fail: Different company names used in different sections
+
+check_id: CC_FILING_COUNT_PLAUSIBLE
+check_name: Filing count plausible given states in scope
+Pass: The annual return count in the filing tier is roughly consistent with the number of active states multiplied by their frequencies (monthly=12/year, quarterly=4/year, annual=1/year)
+Warn: The return count is implausibly low or high relative to the number of active states and their frequencies
+
+
+## Message tone guidance
+
+- PASS messages: brief, confirm what was found. Example: "Found: BigCommerce, go-live 2026-04-17"
+- FAIL messages: direct, specific, tell the rep exactly what to fix. Example: "No filing frequency noted for Indiana (File=X, Nexus=P). Add Monthly, Quarterly, or Annual to the Notes column."
+- WARNING messages: explain the risk without being alarmist. Example: "Indiana is an SST member state with File=X but no SST ID status noted. If migrating from another provider, the SST ID release must be initiated before first filing."
+- Keep all messages under 2 sentences.
+- value_found should be the literal text found (or a short description of it), not your interpretation of it.`;
+
+// ─────────────────────────────────────────────────────────────────────────────
+// State
+// ─────────────────────────────────────────────────────────────────────────────
+let selectedFile = null;
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Settings — API key
+// ─────────────────────────────────────────────────────────────────────────────
+const apiKeyInput = document.getElementById('api-key');
+
+function getStoredKey() { return localStorage.getItem('tc_qa_api_key') || ''; }
+
+function refreshKeyStatus() {
+  const key = getStoredKey();
+  const dot      = document.getElementById('key-dot');
+  const statusTx = document.getElementById('key-status-text');
+  const editBtn  = document.getElementById('key-edit-btn');
+  if (key) {
+    dot.className      = 'pricing-dot loaded';
+    statusTx.className = 'pricing-filename';
+    statusTx.textContent = 'Configured';
+    editBtn.textContent  = 'Change';
+  } else {
+    dot.className      = 'pricing-dot missing';
+    statusTx.className = 'pricing-filename none';
+    statusTx.textContent = 'Not configured';
+    editBtn.textContent  = 'Set key';
+  }
+  refreshSettingsBadges();
+  updateValidateBtn();
+}
+
+document.getElementById('key-edit-btn').addEventListener('click', () => {
+  const row = document.getElementById('key-input-row');
+  const visible = row.style.display !== 'none';
+  row.style.display = visible ? 'none' : 'flex';
+  if (!visible) {
+    apiKeyInput.value = getStoredKey();
+    apiKeyInput.focus();
+  }
+});
+
+document.getElementById('key-save-btn').addEventListener('click', () => {
+  const val = apiKeyInput.value.trim();
+  if (val) localStorage.setItem('tc_qa_api_key', val);
+  document.getElementById('key-input-row').style.display = 'none';
+  refreshKeyStatus();
+});
+
+document.getElementById('key-clear-btn').addEventListener('click', () => {
+  localStorage.removeItem('tc_qa_api_key');
+  apiKeyInput.value = '';
+  document.getElementById('key-input-row').style.display = 'none';
+  refreshKeyStatus();
+});
+
+// Show/hide key toggle
+document.getElementById('toggle-key').addEventListener('click', () => {
+  const isHidden = apiKeyInput.type === 'password';
+  apiKeyInput.type = isHidden ? 'text' : 'password';
+  document.getElementById('eye-icon').style.display     = isHidden ? 'none' : '';
+  document.getElementById('eye-off-icon').style.display = isHidden ? '' : 'none';
+});
+
+// Save on Enter
+apiKeyInput.addEventListener('keydown', e => {
+  if (e.key === 'Enter') document.getElementById('key-save-btn').click();
+});
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Settings — Pricing table (persisted in localStorage)
+// ─────────────────────────────────────────────────────────────────────────────
+const PRICING_LS_KEY   = 'tc_qa_pricing_table';
+const PRICING_ACCEPTED = ['application/pdf', 'text/csv', 'text/plain'];
+const PRICING_EXTS     = ['.pdf', '.csv', '.txt'];
+const MAX_PRICING_BYTES = 4 * 1024 * 1024; // 4 MB base64 limit
+
+function getStoredPricing() {
+  try { return JSON.parse(localStorage.getItem(PRICING_LS_KEY)); } catch { return null; }
+}
+
+function refreshPricingStatus() {
+  const stored = getStoredPricing();
+  const dot    = document.getElementById('pricing-dot');
+  const text   = document.getElementById('pricing-status-text');
+  const clearB = document.getElementById('pricing-clear-btn');
+  const uploadB = document.getElementById('pricing-upload-btn');
+  if (stored) {
+    dot.className    = 'pricing-dot loaded';
+    text.className   = 'pricing-filename';
+    text.textContent = stored.filename;
+    clearB.style.display  = '';
+    uploadB.textContent   = 'Replace';
+  } else {
+    dot.className    = 'pricing-dot missing';
+    text.className   = 'pricing-filename none';
+    text.textContent = 'Not loaded';
+    clearB.style.display  = 'none';
+    uploadB.textContent   = 'Upload';
+  }
+  refreshSettingsBadges();
+}
+
+function refreshSettingsBadges() {
+  const badges = document.getElementById('settings-config-badges');
+  const keyOk     = !!getStoredKey();
+  const pricingOk = !!getStoredPricing();
+  badges.innerHTML =
+    `<span class="cfg-badge ${keyOk     ? 'ok' : 'missing'}" title="API Key"></span>` +
+    `<span class="cfg-badge ${pricingOk ? 'ok' : 'missing'}" title="Pricing Table"></span>`;
+}
+
+// Pricing upload zone toggle
+document.getElementById('pricing-upload-btn').addEventListener('click', () => {
+  const zone = document.getElementById('pricing-upload-zone');
+  zone.style.display = zone.style.display === 'block' ? 'none' : 'block';
+});
+
+document.getElementById('pricing-clear-btn').addEventListener('click', () => {
+  localStorage.removeItem(PRICING_LS_KEY);
+  document.getElementById('pricing-upload-zone').style.display = 'none';
+  refreshPricingStatus();
+});
+
+function isPricingFileOk(file) {
+  if (PRICING_ACCEPTED.includes(file.type)) return true;
+  return PRICING_EXTS.some(ext => file.name.toLowerCase().endsWith(ext));
+}
+
+async function savePricingFile(file) {
+  document.getElementById('pricing-type-error').style.display = 'none';
+  document.getElementById('pricing-size-error').style.display = 'none';
+
+  if (!isPricingFileOk(file)) {
+    document.getElementById('pricing-type-error').style.display = 'block';
+    return;
+  }
+
+  const isPdf = file.type === 'application/pdf' || file.name.toLowerCase().endsWith('.pdf');
+  let data, fileType;
+
+  if (isPdf) {
+    data     = await readFileAsBase64(file);
+    fileType = 'pdf';
+  } else {
+    data     = await readFileAsText(file);
+    fileType = 'text';
+  }
+
+  const payload = JSON.stringify({ filename: file.name, fileType, data });
+  if (payload.length > MAX_PRICING_BYTES) {
+    document.getElementById('pricing-size-error').style.display = 'block';
+    return;
+  }
+
+  try {
+    localStorage.setItem(PRICING_LS_KEY, payload);
+  } catch (e) {
+    document.getElementById('pricing-size-error').style.display = 'block';
+    return;
+  }
+
+  document.getElementById('pricing-upload-zone').style.display = 'none';
+  document.getElementById('pricing-file-input').value = '';
+  refreshPricingStatus();
+}
+
+const pricingFileInput  = document.getElementById('pricing-file-input');
+const pricingUploadZone = document.getElementById('pricing-upload-zone');
+
+pricingFileInput.addEventListener('change', e => {
+  if (e.target.files[0]) savePricingFile(e.target.files[0]);
+});
+pricingUploadZone.addEventListener('dragover', e => { e.preventDefault(); pricingUploadZone.classList.add('drag-over'); });
+pricingUploadZone.addEventListener('dragleave', () => pricingUploadZone.classList.remove('drag-over'));
+pricingUploadZone.addEventListener('drop', e => {
+  e.preventDefault();
+  pricingUploadZone.classList.remove('drag-over');
+  if (e.dataTransfer.files[0]) savePricingFile(e.dataTransfer.files[0]);
+});
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Settings panel toggle
+// ─────────────────────────────────────────────────────────────────────────────
+document.getElementById('settings-toggle').addEventListener('click', () => {
+  const body  = document.getElementById('settings-body');
+  const caret = document.getElementById('settings-caret');
+  const open  = body.classList.toggle('open');
+  caret.classList.toggle('open', open);
+});
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Proposal file handling
+// ─────────────────────────────────────────────────────────────────────────────
+const dropZone    = document.getElementById('drop-zone');
+const fileInput   = document.getElementById('file-input');
+const fileNameEl  = document.getElementById('file-name');
+const fileTypeErr = document.getElementById('file-type-error');
+
+function handleFile(file) {
+  fileTypeErr.style.display = 'none';
+  if (!file) return;
+  if (file.type !== 'application/pdf' && !file.name.toLowerCase().endsWith('.pdf')) {
+    fileTypeErr.style.display = 'block';
+    selectedFile = null;
+    fileNameEl.style.display = 'none';
+    updateValidateBtn();
+    return;
+  }
+  selectedFile = file;
+  fileNameEl.textContent   = file.name;
+  fileNameEl.style.display = 'inline-block';
+  updateValidateBtn();
+}
+
+fileInput.addEventListener('change', e => handleFile(e.target.files[0]));
+dropZone.addEventListener('dragover', e => { e.preventDefault(); dropZone.classList.add('drag-over'); });
+dropZone.addEventListener('dragleave', () => dropZone.classList.remove('drag-over'));
+dropZone.addEventListener('drop', e => {
+  e.preventDefault();
+  dropZone.classList.remove('drag-over');
+  handleFile(e.dataTransfer.files[0]);
+});
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Validate button state
+// ─────────────────────────────────────────────────────────────────────────────
+function updateValidateBtn() {
+  const apiKeyOk = !!getStoredKey();
+  const msgEl    = document.getElementById('api-missing-msg');
+  msgEl.style.display = (!apiKeyOk && selectedFile) ? 'block' : 'none';
+  document.getElementById('btn-validate').disabled = !(apiKeyOk && selectedFile);
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Validate
+// ─────────────────────────────────────────────────────────────────────────────
+document.getElementById('btn-validate').addEventListener('click', async () => {
+  const apiKey = getStoredKey();
+  if (!apiKey) {
+    document.getElementById('api-missing-msg').style.display = 'block';
+    // Open settings so they can fix it
+    document.getElementById('settings-body').classList.add('open');
+    document.getElementById('settings-caret').classList.add('open');
+    return;
+  }
+
+  showLoading(true);
+  hideError();
+  hideResults();
+
+  try {
+    const base64         = await readFileAsBase64(selectedFile);
+    const storedPricing  = getStoredPricing();
+    const pricingPayload = storedPricing
+      ? { type: storedPricing.fileType, data: storedPricing.data }
+      : null;
+    const result = await callAPI(apiKey, base64, pricingPayload);
+    renderResults(result);
+  } catch (err) {
+    showError(err.message || String(err));
+  } finally {
+    showLoading(false);
+  }
+});
+
+function readFileAsBase64(file) {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload  = () => resolve(reader.result.split(',')[1]);
+    reader.onerror = () => reject(new Error('Failed to read file.'));
+    reader.readAsDataURL(file);
+  });
+}
+
+function readFileAsText(file) {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload  = () => resolve(reader.result);
+    reader.onerror = () => reject(new Error('Failed to read pricing file.'));
+    reader.readAsText(file);
+  });
+}
+
+// Returns { type: 'pdf'|'text', data: string } for the pricing table
+async function readPricingFile(file) {
+  const isPdf = file.type === 'application/pdf' || file.name.toLowerCase().endsWith('.pdf');
+  if (isPdf) {
+    const b64 = await readFileAsBase64(file);
+    return { type: 'pdf', data: b64 };
+  }
+  const text = await readFileAsText(file);
+  return { type: 'text', data: text };
+}
+
+async function callAPI(apiKey, base64PdfData, pricingPayload) {
+  // Build content blocks
+  const content = [];
+
+  if (pricingPayload) {
+    // Label the pricing table so Claude knows which document is which
+    content.push({
+      type: 'text',
+      text: 'DOCUMENT 1 — Official TaxCloud Pricing Table (reference document):'
+    });
+    if (pricingPayload.type === 'pdf') {
+      content.push({
+        type: 'document',
+        source: { type: 'base64', media_type: 'application/pdf', data: pricingPayload.data }
+      });
+    } else {
+      content.push({ type: 'text', text: pricingPayload.data });
+    }
+    content.push({
+      type: 'text',
+      text: 'DOCUMENT 2 — Sales Proposal to validate:'
+    });
+  }
+
+  content.push({
+    type: 'document',
+    source: { type: 'base64', media_type: 'application/pdf', data: base64PdfData }
+  });
+
+  // Build the instruction text, extended when a pricing table is present
+  let instruction = 'Please validate this TaxCloud proposal and return your assessment as a JSON object matching the required schema. Return only valid JSON — no markdown, no explanation, no code fences.';
+
+  if (pricingPayload) {
+    instruction += `
+
+ADDITIONAL PRICING TABLE CHECK (because an official pricing table was provided):
+
+For every subscription line item in the proposal — Annual Order Tier, Filing Tier, Onboarding Fee, and any other priced items — do the following:
+
+1. Look up the list price for that item in the pricing table (Document 1).
+2. Compare the amount charged in the proposal to the list price.
+3. If the proposal amount matches list price: this is fine, no action needed.
+4. If the proposal amount is LOWER than list price:
+   a. Check whether a discount is explicitly documented in the proposal — it must appear both as a named line item in the pricing tables AND be called out in the discount narrative (S3_DISCOUNT_NARRATIVE).
+   b. If a discount IS documented and the math is correct: this is fine.
+   c. If the price is below list but NO discount is documented anywhere: this is a BLOCKING failure. The rep has applied a silent discount. Add a field to Section 5 with:
+      - field_id: "S5_UNDISCLOSED_[ITEM]" (e.g. S5_UNDISCLOSED_ORDER_TIER)
+      - field_name: "Undisclosed discount — [item name]"
+      - severity: "BLOCKING"
+      - status: "FAIL"
+      - value_found: the actual amount found in the proposal
+      - message: "Proposal charges $X for [item] but list price is $Y. No discount is documented. Either charge list price or add an explicit discount line item and update the discount narrative."
+
+Also add a cross-check at the end of the cross_checks array:
+- check_id: "CC_PRICE_TABLE_MATCH"
+- check_name: "Proposal prices match pricing table"
+- status: "PASS" if all prices match list or have documented discounts, "FAIL" if any silent discount was found
+- message: brief summary of what matched and what didn't`;
+  }
+
+  content.push({ type: 'text', text: instruction });
+
+  const resp = await fetch('https://api.anthropic.com/v1/messages', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'x-api-key': apiKey,
+      'anthropic-version': '2023-06-01',
+      'anthropic-dangerous-direct-browser-access': 'true'
+    },
+    body: JSON.stringify({
+      model: 'claude-sonnet-4-20250514',
+      max_tokens: 4096,
+      system: SYSTEM_PROMPT,
+      messages: [{ role: 'user', content }]
+    })
+  });
+
+  const body = await resp.json();
+
+  if (!resp.ok) {
+    const msg = body?.error?.message || JSON.stringify(body);
+    throw new Error(`API error ${resp.status}: ${msg}`);
+  }
+
+  const raw     = body?.content?.[0]?.text ?? '';
+  const cleaned = raw.replace(/^```(?:json)?\s*/i, '').replace(/\s*```$/, '').trim();
+
+  try {
+    return JSON.parse(cleaned);
+  } catch (_) {
+    throw new Error(`The agent returned an unexpected response. Raw output:\n\n${raw}`);
+  }
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// UI state helpers
+// ─────────────────────────────────────────────────────────────────────────────
+function showLoading(on) {
+  document.getElementById('loading').style.display      = on ? 'block' : 'none';
+  document.getElementById('setup-panel').style.display  = on ? 'none'  : 'block';
+}
+function showError(msg) {
+  document.getElementById('error-text').textContent = msg;
+  document.getElementById('error-box').style.display  = 'block';
+  document.getElementById('setup-panel').style.display = 'block';
+}
+function hideError()   { document.getElementById('error-box').style.display   = 'none'; }
+function hideResults() { document.getElementById('results').style.display     = 'none'; }
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Render
+// ─────────────────────────────────────────────────────────────────────────────
+function renderResults(data) {
+  document.getElementById('setup-panel').style.display = 'none';
+  document.getElementById('results').style.display     = 'block';
+
+  // — Banner —
+  const banner   = document.getElementById('status-banner');
+  const iconEl   = document.getElementById('status-icon');
+  const titleEl  = document.getElementById('banner-title');
+  const subEl    = document.getElementById('banner-subtitle');
+
+  banner.className = 'status-banner';
+  if (data.overall_status === 'FAIL') {
+    banner.classList.add('fail');
+    iconEl.textContent  = '✕';
+    titleEl.textContent = `Not ready to send — ${data.blocking_count} blocking issue${data.blocking_count !== 1 ? 's' : ''} found`;
+    const parts = [];
+    if (data.blocking_count) parts.push(`${data.blocking_count} blocking`);
+    if (data.warning_count)  parts.push(`${data.warning_count} warning${data.warning_count !== 1 ? 's' : ''}`);
+    subEl.textContent = parts.join(', ');
+  } else if (data.overall_status === 'PASS_WITH_WARNINGS') {
+    banner.classList.add('warn');
+    iconEl.textContent  = '!';
+    titleEl.textContent = 'Ready to send with cautions — review warnings below';
+    subEl.textContent   = data.warning_count ? `${data.warning_count} warning${data.warning_count !== 1 ? 's' : ''} to review` : '';
+  } else {
+    banner.classList.add('pass');
+    iconEl.textContent  = '✓';
+    titleEl.textContent = 'Good to go — proposal passed all checks';
+    subEl.textContent   = '';
+  }
+
+  // — Summary —
+  document.getElementById('summary-text').textContent = data.summary || '';
+
+  // — Blocking callout —
+  const callout     = document.getElementById('blocking-callout');
+  const calloutList = document.getElementById('blocking-issues-list');
+  calloutList.innerHTML = '';
+
+  const blockingFields = [];
+  (data.sections || []).forEach(sec => {
+    (sec.fields || []).forEach(f => {
+      if (f.severity === 'BLOCKING' && f.status === 'FAIL') {
+        blockingFields.push({ section: sec.section_name, field: f });
+      }
+    });
+  });
+
+  if (blockingFields.length > 0) {
+    document.getElementById('blocking-callout-title').textContent =
+      `${blockingFields.length} Blocking Issue${blockingFields.length !== 1 ? 's' : ''} — Must Fix Before Sending`;
+    blockingFields.forEach(({ section, field }) => {
+      const div = document.createElement('div');
+      div.className = 'blocking-issue';
+      div.innerHTML =
+        `<div class="blocking-dot"></div>` +
+        `<div class="blocking-issue-text">` +
+        `<span class="blocking-issue-field">${esc(field.field_name)}</span>` +
+        ` (${esc(section)}) — ${esc(field.message)}` +
+        `</div>`;
+      calloutList.appendChild(div);
+    });
+    callout.style.display = 'block';
+  } else {
+    callout.style.display = 'none';
+  }
+
+  // — Section cards —
+  const grid = document.getElementById('sections-grid');
+  grid.innerHTML = '';
+  (data.sections || []).forEach(sec => grid.appendChild(buildSectionCard(sec)));
+
+  // — Cross-checks —
+  const ccList = document.getElementById('cross-checks-list');
+  ccList.innerHTML = '';
+  (data.cross_checks || []).forEach(cc => {
+    const row = document.createElement('div');
+    row.className = 'cross-check-row';
+    const cls = cc.status === 'FAIL' ? 'badge-FAIL' : cc.status === 'WARN' ? 'badge-WARN' : 'badge-PASS';
+    row.innerHTML =
+      `<span class="badge ${cls}">${esc(cc.status)}</span>` +
+      `<div class="cross-check-info">` +
+      `<div class="cross-check-name">${esc(cc.check_name)}</div>` +
+      `<div class="cross-check-msg">${esc(cc.message)}</div>` +
+      `</div>`;
+    ccList.appendChild(row);
+  });
+}
+
+function buildSectionCard(sec) {
+  const card = document.createElement('div');
+  card.className = 'section-card';
+
+  const secBadgeCls = `badge-sec-${sec.status}`;
+
+  card.innerHTML =
+    `<div class="section-header">` +
+    `<span class="section-name">${esc(sec.section_name)}</span>` +
+    `<span class="badge ${secBadgeCls}">${esc(sec.status)}</span>` +
+    `</div>` +
+    `<table>` +
+    `<thead><tr>` +
+    `<th class="col-field">Field</th>` +
+    `<th class="col-value">Value Found</th>` +
+    `<th class="col-status">Status</th>` +
+    `<th class="col-message">Message</th>` +
+    `</tr></thead>` +
+    `<tbody></tbody>` +
+    `</table>`;
+
+  const tbody = card.querySelector('tbody');
+
+  (sec.fields || []).forEach(f => {
+    const tr = document.createElement('tr');
+    if (f.status === 'FAIL') tr.className = 'row-fail';
+    else if (f.status === 'WARN') tr.className = 'row-warn';
+
+    let badgeCls, badgeLabel;
+    if (f.status === 'PASS') {
+      badgeCls = 'badge-PASS'; badgeLabel = 'PASS';
+    } else if (f.status === 'SKIP') {
+      badgeCls = 'badge-SKIP'; badgeLabel = 'SKIP';
+    } else if (f.status === 'FAIL' && f.severity === 'BLOCKING') {
+      badgeCls = 'badge-BLOCKING'; badgeLabel = 'BLOCKING';
+    } else if (f.status === 'FAIL') {
+      badgeCls = 'badge-FAIL'; badgeLabel = 'FAIL';
+    } else if (f.status === 'WARN') {
+      badgeCls = 'badge-WARNING'; badgeLabel = 'WARNING';
+    } else {
+      badgeCls = 'badge-CONDITIONAL'; badgeLabel = f.severity || 'CONDITIONAL';
+    }
+
+    const valueDisplay = f.value_found != null
+      ? esc(String(f.value_found))
+      : `<span style="color:var(--gray-500);font-style:italic">—</span>`;
+
+    tr.innerHTML =
+      `<td class="col-field">${esc(f.field_name)}</td>` +
+      `<td class="col-value">${valueDisplay}</td>` +
+      `<td class="col-status"><span class="badge ${badgeCls}">${badgeLabel}</span></td>` +
+      `<td class="col-message">${esc(f.message)}</td>`;
+
+    tbody.appendChild(tr);
+  });
+
+  return card;
+}
+
+function esc(str) {
+  if (str == null) return '';
+  return String(str)
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;');
+}
+
+// Reset
+document.getElementById('btn-reset').addEventListener('click', () => {
+  hideResults();
+  hideError();
+  document.getElementById('setup-panel').style.display = 'block';
+  selectedFile             = null;
+  fileNameEl.style.display = 'none';
+  fileTypeErr.style.display = 'none';
+  fileInput.value          = '';
+  updateValidateBtn();
+});
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Init
+// ─────────────────────────────────────────────────────────────────────────────
+refreshKeyStatus();
+refreshPricingStatus();
+// Auto-open settings if key not yet configured
+if (!getStoredKey()) {
+  document.getElementById('settings-body').classList.add('open');
+  document.getElementById('settings-caret').classList.add('open');
+}
+</script>
+</body>
+</html>
