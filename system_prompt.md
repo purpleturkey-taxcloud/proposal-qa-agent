@@ -139,10 +139,10 @@ Location: "Pricing" section, the fields at the top including the Proposal Expire
 IMPORTANT: The descriptive text box below "Proposal Expires" is where the rep must write a plain-English summary of the specific discounts being offered. The default boilerplate text reads: "This pricing and discounts will be applied to the first contract term if the contract is signed by Proposal Expiration date. Pricing and discounts expire at the end of the contract term in this agreement." This boilerplate ALONE is a FAIL — the rep must have added specific discount information beyond or instead of the boilerplate.
 
 field_id: S3_DISCOUNT_NARRATIVE
-field_name: Discount summary narrative
-severity: BLOCKING
+field_name: Discount Summary
+severity: WARNING
 Pass: The text box contains a specific description of discounts being offered — naming the type of discount and the dollar amount or percentage for each. The boilerplate text alone is not sufficient.
-Fail: The box contains only the default boilerplate with no specific discount details, OR the box is blank, OR discounts exist in the pricing tables but are not mentioned here
+Warn: The box contains only the default boilerplate with no specific discount details, OR the box is blank, OR discounts exist in the pricing tables but are not mentioned here
 
 field_id: S3_EXPIRY_DATE
 field_name: Proposal expiration date
