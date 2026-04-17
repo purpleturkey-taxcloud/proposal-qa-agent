@@ -117,7 +117,21 @@
       margin: 0 auto 16px;
     }
     @keyframes spin { to { transform: rotate(360deg); } }
-    #loading p { font-size: 15px; color: var(--gray-500); }
+    #loading-msg { font-size: 15px; color: var(--gray-500); transition: opacity 0.3s; }
+    .progress-bar-wrap {
+      width: 240px; height: 3px;
+      background: var(--gray-200);
+      border-radius: 2px;
+      margin: 14px auto 0;
+      overflow: hidden;
+    }
+    .progress-bar {
+      height: 100%;
+      background: var(--blue);
+      border-radius: 2px;
+      width: 0%;
+      transition: width 0.4s ease;
+    }
 
     /* ── Error ── */
     #error-box {
@@ -290,7 +304,8 @@
 
   <div id="loading">
     <div class="spinner"></div>
-    <p>Validating proposal&hellip;</p>
+    <p id="loading-msg">Reading proposal&hellip;</p>
+    <div class="progress-bar-wrap"><div class="progress-bar" id="progress-bar"></div></div>
   </div>
 
   <div id="error-box">
@@ -362,6 +377,28 @@ dropZone.addEventListener('drop', e => {
   handleFile(e.dataTransfer.files[0]);
 });
 
+// Progress phases shown while streaming
+const PHASES = [
+  { at:    0, pct:  5, msg: 'Reading proposal\u2026' },
+  { at:  200, pct: 20, msg: 'Checking identity fields\u2026' },
+  { at:  600, pct: 38, msg: 'Reviewing states table\u2026' },
+  { at: 1100, pct: 52, msg: 'Checking contract terms\u2026' },
+  { at: 1600, pct: 65, msg: 'Validating onboarding details\u2026' },
+  { at: 2100, pct: 76, msg: 'Verifying pricing\u2026' },
+  { at: 2600, pct: 86, msg: 'Checking account provisioning\u2026' },
+  { at: 3100, pct: 93, msg: 'Running cross-checks\u2026' },
+  { at: 3600, pct: 97, msg: 'Finalising report\u2026' },
+];
+
+function updateProgress(charCount) {
+  let phase = PHASES[0];
+  for (const p of PHASES) {
+    if (charCount >= p.at) phase = p;
+  }
+  document.getElementById('loading-msg').textContent = phase.msg;
+  document.getElementById('progress-bar').style.width = phase.pct + '%';
+}
+
 document.getElementById('btn-validate').addEventListener('click', async () => {
   if (!selectedFile) return;
 
@@ -369,16 +406,65 @@ document.getElementById('btn-validate').addEventListener('click', async () => {
   document.getElementById('loading').style.display      = 'block';
   document.getElementById('error-box').style.display    = 'none';
   document.getElementById('results').style.display      = 'none';
+  updateProgress(0);
 
   try {
     const form = new FormData();
     form.append('proposal', selectedFile);
 
     const resp = await fetch('/api/validate', { method: 'POST', body: form });
-    const data = await resp.json();
 
+    // Non-streaming error (e.g. bad API key, no file)
     if (!resp.ok) {
+      const data = await resp.json();
       throw new Error(data.error || `Server error ${resp.status}`);
+    }
+
+    // Stream SSE and accumulate text deltas
+    const reader  = resp.body.getReader();
+    const decoder = new TextDecoder();
+    let buffer    = '';
+    let fullText  = '';
+    let charCount = 0;
+
+    while (true) {
+      const { done, value } = await reader.read();
+      if (done) break;
+
+      buffer += decoder.decode(value, { stream: true });
+      const lines = buffer.split('\n');
+      buffer = lines.pop(); // keep incomplete last line
+
+      for (const line of lines) {
+        if (!line.startsWith('data: ')) continue;
+        const payload = line.slice(6).trim();
+        if (payload === '[DONE]') continue;
+        try {
+          const evt = JSON.parse(payload);
+          if (evt.type === 'content_block_delta' && evt.delta?.type === 'text_delta') {
+            fullText  += evt.delta.text;
+            charCount += evt.delta.text.length;
+            updateProgress(charCount);
+          }
+          // Surface streaming-level errors
+          if (evt.type === 'error') {
+            throw new Error(evt.error?.message || 'Streaming error from API');
+          }
+        } catch (parseErr) {
+          if (parseErr.message.includes('Streaming error')) throw parseErr;
+          // Ignore JSON parse errors on non-data lines
+        }
+      }
+    }
+
+    // Complete — parse and render
+    document.getElementById('progress-bar').style.width = '100%';
+    const cleaned = fullText.replace(/^```(?:json)?\s*/i, '').replace(/\s*```$/, '').trim();
+    let data;
+    try {
+      data = JSON.parse(cleaned);
+    } catch (_) {
+      throw new Error(`The agent returned an unexpected response. Raw output:\n\n${fullText}`);
     }
 
     renderResults(data);

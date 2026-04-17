@@ -184,31 +184,34 @@ app.post('/api/validate', upload.single('proposal'), async (req, res) => {
       body: JSON.stringify({
         model: 'claude-sonnet-4-20250514',
         max_tokens: 4096,
+        stream: true,
         system: SYSTEM_PROMPT,
         messages: [{ role: 'user', content }]
       })
     });
 
-    const apiBody = await apiResp.json();
-
     if (!apiResp.ok) {
+      const apiBody = await apiResp.json();
       const msg = apiBody?.error?.message || JSON.stringify(apiBody);
       return res.status(502).json({ error: `Anthropic API error: ${msg}` });
     }
 
-    const raw     = apiBody?.content?.[0]?.text ?? '';
-    const cleaned = raw.replace(/^```(?:json)?\s*/i, '').replace(/\s*```$/, '').trim();
+    // Forward the SSE stream straight to the browser
+    res.setHeader('Content-Type', 'text/event-stream');
+    res.setHeader('Cache-Control', 'no-cache');
+    res.setHeader('Connection', 'keep-alive');
 
-    let parsed;
-    try {
-      parsed = JSON.parse(cleaned);
-    } catch (_) {
-      return res.status(502).json({ error: 'The agent returned an unexpected response.', raw });
+    for await (const chunk of apiResp.body) {
+      res.write(chunk);
     }
-
-    res.json(parsed);
+    res.end();
   } catch (err) {
-    res.status(500).json({ error: err.message });
+    // Only send JSON error if headers haven't been sent yet
+    if (!res.headersSent) {
+      res.status(500).json({ error: err.message });
+    } else {
+      res.end();
+    }
   }
 });
 
