@@ -77,6 +77,14 @@
       padding: 24px;
       margin-bottom: 24px;
     }
+    .upload-description {
+      font-size: 14px;
+      line-height: 1.6;
+      color: var(--gray-700);
+      margin-bottom: 20px;
+      padding-bottom: 20px;
+      border-bottom: 1px solid var(--gray-100);
+    }
 
     .drop-zone {
       border: 2px dashed var(--gray-200);
@@ -309,6 +317,7 @@
 <main>
 
   <div class="upload-panel" id="upload-panel">
+    <p class="upload-description">This tool is designed to help you catch PandaDoc issues before sending a proposal out to a prospect. Once your PandaDoc is ready to send, just upload the PDF to this grader tool and it will give you a readout of any mistakes, missing fields, or areas of improvement. These should be fixed before sending the contract for signature.</p>
     <div class="drop-zone" id="drop-zone">
       <input type="file" id="file-input" accept="application/pdf,.pdf" />
       <svg class="drop-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
