@@ -118,7 +118,7 @@ Orders per Month | Starter Plan | Premium Plan
 
 const PRICING_INSTRUCTION = `
 
-PRICING TABLE CHECK — The official TaxCloud list prices are embedded above. Apply the following rules to every priced line item in the proposal (Annual Order Tier, Filing Tier, Onboarding Fee, and any other priced items):
+PRICING TABLE CHECK — The official TaxCloud list prices are embedded above. Apply the following rules to every priced line item in the proposal (Annual Order Tier, Filing Tier, CSM fee, Onboarding Fee, and any other priced items). Note: CSM is a recurring subscription line item and must be included in the subscription total — treat it the same as Order Tier and Filing Tier when checking prices and totals.
 
 1. Find the matching row in the pricing table by return count (for filing tiers) or annual order volume and plan type (for subscription tiers).
 2. Compare the amount the proposal charges to the list price in that row.

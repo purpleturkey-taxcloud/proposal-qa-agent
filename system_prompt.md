@@ -252,11 +252,18 @@ severity: BLOCKING
 Pass: The onboarding fee shows both a list price and a discount amount, and the subtotal equals list price minus discount
 Fail: Discount is applied but not shown as a line item, or the math is wrong
 
+field_id: S5_CSM
+field_name: CSM fee
+severity: BLOCKING
+Pass: A CSM (Customer Success Manager) line item is present in the subscription section with a non-zero dollar amount
+Fail: No CSM line item found in the subscription section, or the amount is blank or $0
+Note: CSM is a recurring subscription charge and must be included as part of the subscription total, not treated as a one-time or optional fee
+
 field_id: S5_TOTAL_MATH
 field_name: Subscription total math
 severity: BLOCKING
-Pass: Total Subscription Fees equals Annual Order Tier subtotal plus Filing Tier subtotal
-Fail: The numbers do not add up
+Pass: Total Subscription Fees equals Annual Order Tier subtotal plus Filing Tier subtotal plus CSM fee
+Fail: The numbers do not add up, or CSM is present but not included in the subscription total
 
 field_id: S5_CO_LA
 field_name: CO and LA surcharge noted
