@@ -109,8 +109,9 @@ Fail: File=X but Nexus column is blank for that state
 field_id: S2_FREQUENCY
 field_name: Filing frequency in Notes
 severity: BLOCKING
-Pass: Every non-SST state with File=X has a filing frequency in the Notes column (Monthly, Quarterly, or Annual). SST member states do not require a filing frequency and should not be flagged for missing one.
-Fail: A non-SST state has File=X but no filing frequency in the Notes column
+Pass: Every non-SST state with File=X has a filing frequency in the Notes column (Monthly, Quarterly, or Annual).
+Fail: A non-SST state has File=X but no filing frequency in the Notes column.
+IMPORTANT: The following are SST member states — do NOT flag them for missing filing frequency, even if their Notes column is blank: Arkansas, Georgia, Indiana, Iowa, Kansas, Kentucky, Michigan, Minnesota, Nebraska, Nevada, New Jersey, North Carolina, North Dakota, Ohio, Oklahoma, Rhode Island, South Dakota, Tennessee, Utah, Vermont, Washington, West Virginia, Wisconsin, Wyoming. Only flag states that are NOT on this list.
 
 field_id: S2_SST_ID
 field_name: SST ID status noted
