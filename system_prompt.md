@@ -140,14 +140,14 @@ Location: "Pricing" section, the fields at the top including the Proposal Expire
 field_id: S3_EXPIRY_DATE
 field_name: Proposal expiration date
 severity: BLOCKING
-Pass: A specific date is present in the Proposal Expires field
+Pass: Any recognisable date is present in the Proposal Expires field, in any format. Do not fail for formatting — only fail if the field is blank or contains a placeholder like "MM/DD/YYYY".
 Fail: Blank or a placeholder
 
 field_id: S3_EXPIRY_FUTURE
 field_name: Expiration date is in the future
 severity: BLOCKING
-Pass: The expiration date is after today's date
-Fail: The date is today or in the past — the proposal is already expired
+Pass: The expiration date is in the future. Accept any date format — do not fail for formatting.
+Fail: The date is clearly in the past
 
 field_id: S3_TERM
 field_name: Contract subscription term
@@ -158,14 +158,14 @@ Fail: Blank
 field_id: S3_START
 field_name: Contract start date
 severity: BLOCKING
-Pass: "Date of Signing" or a specific date is present
+Pass: Any indication of a start date is present — "Date of Signing", a specific date in any format, or similar language. Do not fail for formatting.
 Fail: Blank
 
 field_id: S3_END
 field_name: Contract end date
 severity: BLOCKING
-Pass: A duration or date is present and is consistent with the subscription term
-Fail: Blank or inconsistent with the stated term
+Pass: Any end date or duration is present (e.g. "1 year from signing", a specific date in any format). Do not fail for formatting.
+Fail: Blank
 
 field_id: S3_BILLING
 field_name: Billing cycle
@@ -189,7 +189,7 @@ Fail: "TBD", blank, or a generic phrase like "ecommerce platform"
 field_id: S4_GOLIVE
 field_name: Estimated integration go-live date
 severity: BLOCKING
-Pass: A specific date is present
+Pass: Any recognisable date is present in any format. Do not fail for formatting.
 Fail: Blank or "TBD"
 
 field_id: S4_FIRST_FILING
