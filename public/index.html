@@ -524,6 +524,16 @@ document.getElementById('btn-reset').addEventListener('click', () => {
 function renderResults(data) {
   document.getElementById('results').style.display = 'block';
 
+  // Always count from actual fields — never trust Claude's reported counts
+  let blockingCount = 0;
+  let warningCount  = 0;
+  (data.sections || []).forEach(sec =>
+    (sec.fields || []).forEach(f => {
+      if (f.severity === 'BLOCKING' && f.status === 'FAIL') blockingCount++;
+      if (f.severity === 'WARNING'  && f.status === 'WARN') warningCount++;
+    })
+  );
+
   const banner  = document.getElementById('status-banner');
   const iconEl  = document.getElementById('status-icon');
   const titleEl = document.getElementById('banner-title');
@@ -533,16 +543,16 @@ function renderResults(data) {
   if (data.overall_status === 'FAIL') {
     banner.classList.add('fail');
     iconEl.textContent  = '✕';
-    titleEl.textContent = `Not ready to send — ${data.blocking_count} blocking issue${data.blocking_count !== 1 ? 's' : ''} found`;
+    titleEl.textContent = `Not ready to send — ${blockingCount} blocking issue${blockingCount !== 1 ? 's' : ''} found`;
     const parts = [];
-    if (data.blocking_count) parts.push(`${data.blocking_count} blocking`);
-    if (data.warning_count)  parts.push(`${data.warning_count} warning${data.warning_count !== 1 ? 's' : ''}`);
+    if (blockingCount) parts.push(`${blockingCount} blocking`);
+    if (warningCount)  parts.push(`${warningCount} warning${warningCount !== 1 ? 's' : ''}`);
     subEl.textContent = parts.join(', ');
   } else if (data.overall_status === 'PASS_WITH_WARNINGS') {
     banner.classList.add('warn');
     iconEl.textContent  = '!';
     titleEl.textContent = 'Ready to send with cautions — review warnings below';
-    subEl.textContent   = data.warning_count ? `${data.warning_count} warning${data.warning_count !== 1 ? 's' : ''} to review` : '';
+    subEl.textContent   = warningCount ? `${warningCount} warning${warningCount !== 1 ? 's' : ''} to review` : '';
   } else {
     banner.classList.add('pass');
     iconEl.textContent  = '✓';
