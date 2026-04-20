@@ -136,14 +136,6 @@ Warn: All states show dashes — no filing scope is defined
 
 Location: "Pricing" section, the fields at the top including the Proposal Expires box and the descriptive text box directly below it
 
-IMPORTANT: The descriptive text box below "Proposal Expires" is where the rep must write a plain-English summary of the specific discounts being offered. The default boilerplate text reads: "This pricing and discounts will be applied to the first contract term if the contract is signed by Proposal Expiration date. Pricing and discounts expire at the end of the contract term in this agreement." This boilerplate ALONE is a FAIL — the rep must have added specific discount information beyond or instead of the boilerplate.
-
-field_id: S3_DISCOUNT_NARRATIVE
-field_name: Discount Summary
-severity: WARNING
-Pass: The text box contains a specific description of discounts being offered — naming the type of discount and the dollar amount or percentage for each. The boilerplate text alone is not sufficient.
-Warn: The box contains only the default boilerplate with no specific discount details, OR the box is blank, OR discounts exist in the pricing tables but are not mentioned here
-
 field_id: S3_EXPIRY_DATE
 field_name: Proposal expiration date
 severity: BLOCKING
@@ -315,11 +307,6 @@ Skip if: ACH is not mentioned
 ## Cross-checks
 
 Run these after evaluating all sections.
-
-check_id: CC_DISCOUNT_MATCH
-check_name: Discount narrative matches pricing tables
-Pass: Every discount dollar amount in the S3 narrative appears as a matching line item in the pricing tables, and every discount line item in the tables is mentioned in the narrative
-Fail: Amounts in the narrative do not match the line items, or line items exist that are not mentioned in the narrative
 
 check_id: CC_GOLIVE_FILING
 check_name: Go-live date consistent with first filing period
