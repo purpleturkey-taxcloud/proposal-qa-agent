@@ -132,7 +132,7 @@ Pass: At least one state has File=X
 Warn: All states show dashes — no filing scope is defined
 
 
-## Section 3 — Contract Terms and Discount Summary
+## Section 3 — Contract Terms
 
 Location: "Pricing" section, the fields at the top including the Proposal Expires box and the descriptive text box directly below it
 
@@ -247,10 +247,10 @@ Pass: A return count (e.g. "60 Returns") and a dollar amount are both present
 Fail: Either the count or the price is blank
 
 field_id: S5_OB_FEE
-field_name: Onboarding fee and discount
+field_name: Onboarding fee
 severity: BLOCKING
-Pass: The onboarding fee shows both a list price and a discount amount, and the subtotal equals list price minus discount
-Fail: Discount is applied but not shown as a line item, or the math is wrong
+Pass: A non-zero onboarding fee amount is present
+Fail: Onboarding fee is blank or $0
 
 field_id: S5_CSM
 field_name: CSM fee

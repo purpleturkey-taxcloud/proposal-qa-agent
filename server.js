@@ -124,15 +124,15 @@ PRICING TABLE CHECK — The official TaxCloud list prices are embedded above. Ap
 2. Compare the amount the proposal charges to the list price in that row.
 3. If the amounts match: pass.
 4. If the proposal amount is LOWER than list price:
-   a. Check whether a discount is explicitly documented — it must appear as a named line item in the pricing tables AND be described in the discount narrative (S3_DISCOUNT_NARRATIVE).
-   b. If a discount is documented and the math is correct: pass.
-   c. If the price is below list with NO documented discount anywhere: BLOCKING failure. Add a field to Section 5 with:
+   a. Check whether a discount is explicitly documented as a named line item in the pricing tables.
+   b. If a discount line item is present and the math is correct: pass.
+   c. If the price is below list with NO discount line item anywhere: BLOCKING failure. Add a field to Section 5 with:
       - field_id: "S5_UNDISCLOSED_[ITEM]" (e.g. S5_UNDISCLOSED_ORDER_TIER)
       - field_name: "Undisclosed discount — [item name]"
       - severity: "BLOCKING"
       - status: "FAIL"
       - value_found: the actual charged amount from the proposal
-      - message: "Proposal charges $X for [item] but list price is $Y. No discount is documented. Either charge list price or add an explicit discount line item and update the discount narrative."
+      - message: "Proposal charges $X for [item] but list price is $Y. No discount line item is documented. Either charge list price or add an explicit discount line item."
 5. Also add a cross-check entry:
    - check_id: "CC_PRICE_TABLE_MATCH"
    - check_name: "Proposal prices match official pricing table"
