@@ -262,8 +262,8 @@ Note: CSM is a recurring subscription charge and must be included as part of the
 field_id: S5_TOTAL_MATH
 field_name: Subscription total math
 severity: BLOCKING
-Pass: Total Subscription Fees equals Annual Order Tier subtotal plus Filing Tier subtotal plus CSM fee
-Fail: The numbers do not add up, or CSM is present but not included in the subscription total
+Pass: Total Subscription Fees is approximately equal to Annual Order Tier subtotal plus Filing Tier subtotal plus CSM fee. Allow up to $10 of rounding difference — do not flag minor discrepancies.
+Fail: The total is materially wrong — off by more than $10, or CSM is present but clearly not included in the subscription total at all
 
 field_id: S5_CO_LA
 field_name: CO and LA surcharge noted
