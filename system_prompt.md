@@ -231,8 +231,8 @@ Location: "Pricing" section, the subscription tables
 field_id: S5_PLAN
 field_name: Plan type selected
 severity: BLOCKING
-Pass: "Premium" or "Starter" is explicitly named in the subscription section
-Fail: Blank or ambiguous
+Pass: "Premium", "Starter", "Shopify Plan", or "Shopify Plan + SST" is explicitly named in the subscription section. "Shopify Plan" and "Shopify Plan + SST" are acceptable aliases for the Starter Plan and should be treated as equivalent.
+Fail: Blank or ambiguous — no recognized plan name present
 
 field_id: S5_ORDER_TIER
 field_name: Annual order tier price
