@@ -109,8 +109,8 @@ Fail: File=X but Nexus column is blank for that state
 field_id: S2_FREQUENCY
 field_name: Filing frequency in Notes
 severity: BLOCKING
-Pass: Every state with File=X has a filing frequency in the Notes column (Monthly, Quarterly, or Annual)
-Fail: File=X but no frequency noted
+Pass: Every non-SST state with File=X has a filing frequency in the Notes column (Monthly, Quarterly, or Annual). SST member states do not require a filing frequency and should not be flagged for missing one.
+Fail: A non-SST state has File=X but no filing frequency in the Notes column
 
 field_id: S2_SST_ID
 field_name: SST ID status noted
