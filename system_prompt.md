@@ -254,11 +254,11 @@ Pass: A non-zero onboarding fee amount is present
 Fail: Onboarding fee is blank or $0
 
 field_id: S5_CSM
-field_name: CSM fee
+field_name: CSM fee included in total
 severity: BLOCKING
-Pass: A CSM (Customer Success Manager) line item is present in the subscription section with a non-zero dollar amount
-Fail: No CSM line item found in the subscription section, or the amount is blank or $0
-Note: CSM is a recurring subscription charge and must be included as part of the subscription total, not treated as a one-time or optional fee
+Pass: Either no CSM line item is present (it is not required), OR a CSM line item is present with a non-zero amount and that amount is included in the subscription total
+Fail: A CSM line item is present in the contract but its amount is not reflected in the subscription total
+Note: CSM is optional — do not flag a proposal for not having a CSM line item. Only flag it if CSM is listed but excluded from the total
 
 field_id: S5_TOTAL_MATH
 field_name: Subscription total math
